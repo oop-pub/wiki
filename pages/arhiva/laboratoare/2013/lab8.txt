@@ -1,0 +1,213 @@
+= Genericitate =
+
+* Responsabil: [[daniel.ciocirlan@gmail.com|Daniel Ciocîrlan]]
+* Data publicării: 24.11.2013
+* Data ultimei modificări: 25.11.2013
+
+
+== Introducere ==
+
+Genericitatea este un concept nou, introdus o dată cu JDK 5.0. Din unele puncte de vedere, se poate asemăna cu conceptul de //template// din C++. Mecanismul genericității oferă un mijloc de **abstractizare a tipurilor de date** și este util mai ales în ierarhia de colecții.
+
+Să urmărim următorul exemplu:
+
+<code java>
+List myIntList = new LinkedList(); 
+myIntList.add(new Integer(0)); 
+Integer x = (Integer) myIntList.iterator().next();
+</code>
+
+Se observă necesitatea operației de //cast pentru a identifica corect variabila obținută din listă//. Această situație are mai multe dezavantaje:
+  * Este îngreunată citirea codului
+  * Apare posibilitatea unor erori la execuție, în momentul în care în listă se introduce un obiect care nu este de tipul //Integer//.
+
+//Genericitatea// intervine tocmai pentru a elimina aceste probleme. Concret, să urmărim secvența de cod de mai jos:
+
+<code java>
+List<Integer> myIntList = new LinkedList<Integer>(); 
+myIntList.add(new Integer(0));
+Integer x = myIntList.iterator().next();
+</code>
+
+În această situație, lista nu mai conține obiecte oarecare, ci poate conține doar obiecte de tipul //Integer//. În plus, observăm ca a disparut și cast-ul. De această dată, **verificarea tipurilor este efectuată de compilator**, ceea ce elimină potențialele erori de execuție cauzate de eventuale cast-uri incorecte. La modul general, beneficiile dobândite prin utilizarea genericității constau in:
+  * îmbunătățirea lizibilității codului
+  * creșterea gradului de robustețe
+
+== Definirea unor structuri generice simple ==
+
+Să urmărim câteva elemente din definiția oferită de Java pentru tipurile //List// si //Iterator//.
+
+<code java>
+public interface List<E> {
+    void add(E x);
+    Iterator<E> iterator();
+}
+
+public interface Iterator<E> {
+    E next();
+    boolean hasNext();
+}
+</code>
+
+Sintaxa ''<E>'' este folosită pentru a defini tipuri formale în cadrul interfețelor. Aceste tipuri pot fi folosite în mod asemănător cu tipurile uzuale (cu anumite restricții, totuși). În momentul în care invocăm efectiv o structură generică, ele vor fi înlocuite cu tipurile efective utilizate în învocare. Concret, fie un apel de forma:
+
+<code java>
+ArrayList<Integer> myList = new ArrayList<Integer>();
+Iterator<Integer> it = myList.iterator();
+</code>
+
+În această situație, tipul formal //E// a fost înlocuit (la compilare) cu tipul efectiv //Integer//.
+Observație: O analogie (simplistă) referitoare la acest mecanism de lucru cu tipurile se poate face cu mecanismul funcțiilor: acestea se definesc utilizând parametri //formali//, urmând ca, în momentul unui apel, acești parametri să fie înlocuiți cu parametri //actuali//.
+
+== Genericitatea în subtipuri ==
+
+Să considerăm urmatoarea situație:
+
+<code java>
+List<String> stringList = new ArrayList<String>(); // 1
+List<Object> objectList = stringList;              // 2
+</code>
+
+Operația 1 este evident corectă, însă este corectă și operația 2? Presupunând că ar fi, am putea introduce în //objectList// orice fel de obiect, nu doar obiecte de tip String, fapt ce ar conduce la potențiale erori de execuție, astfel:
+
+<code java>
+objectList.add(new Object()); 
+String s = stringList.get(0); // Aceasta operatie ar fi ilegala
+</code>
+
+Din acest motiv, operația 2 **nu va fi permisă de către compilator**! Generalizând, daca //ChildType// este un subtip (clasă descendentă sau subinterfață) al lui //ParentType//, atunci o structură generică //GenericStructure<ChildType>// **//nu//** este un subtip al lui //GenericStructure<ParentType>//. Atenție la acest concept, intrucât el nu este intuitiv!
+
+== Wildcards ==
+
+Wildcard-urile sunt utilizate atunci când dorim să intrebuințăm o structură generică drept //parametru// într-o funcție și nu dorim să limităm tipul de date din colecția respectivă.
+
+<code java>
+void printCollection(Collection<Object> c) {
+    for (Object e : c)
+        System.out.println(e);
+}
+</code>
+
+De exemplu, o situație precum cea de mai sus ne-ar restricționa să folosim la apelul funcției doar o colecție cu elemente de tip //Object// (ceea ce //**nu** poate fi convertită la o colecție de un alt tip//, după cum am vazut mai sus)! Această restricție este eliminată de folosirea **wildcard**-urilor, după cum se poate vedea:
+
+<code java>
+void printCollection(Collection<?> c) {
+    for (Object e : c)
+        System.out.println(e);
+}
+</code>
+
+O limitare care intervine insă este că **nu putem adauga elemente arbitrare** într-o colecție cu wildcard-uri:
+
+<code java>
+Collection<?> c = new ArrayList<String>();  // Operatie permisa
+c.add(new Object());                        // Eroare la compilare
+</code>
+
+Eroarea apare deoarece nu putem adăuga intr-o colecție generica decât elemente **de un anumit tip**, iar wildcard-ul **nu indică un tip anume**.
+Observație: Aceasta înseamnă că nu putem adăuga nici măcar elemente de tip //String//. Singurul element care poate fi adăugat este însă ''null'', întrucât acesta este membru al oricărui tip referință. Pe de altă parte, operațiile de tip //getter// sunt posibile, întrucât rezultatul acestora poate fi mereu interpretat drept //Object//:
+
+<code java>
+List<?> someList = new ArrayList<String>();
+((ArrayList<String>)someList).add("Some String");
+Object item = someList.get(0);
+</code>
+
+== Bounded Wildcards ==
+
+În anumite situații, faptul că un //wildcard// poate fi înlocuit cu orice tip se poate dovedi un inconvenient. Mecanismul bazat pe **Bounded Wildcards** permite introducerea unor restricții asupra tipurilor ce pot inlocui un wildcard, obligându-le să se afle într-o relație ierarhica (de descendență) față de un tip fix specificat.
+Exemplificăm acest mecanism:
+
+<code java>
+class Pizza {
+    protected String name = "Pizza";
+
+    public String getName() {
+        return name;
+    }
+}
+
+class HamPizza extends Pizza {
+    public HamPizza() {
+        name = "HamPizza";
+    }
+}
+
+class CheesePizza extends Pizza {
+    public CheesePizza() {
+        name = "CheesePizza";
+    }
+}
+
+class MyApplication {
+    // Aici folosim "bounded wildcards"
+    public static void listPizza(List<? extends Pizza> pizzaList) {
+        for(Pizza item : pizzaList)
+            System.out.println(item.getName());
+    }
+
+    public static void main(String[] args) {
+        List<Pizza> pList = new ArrayList<Pizza>();
+
+        pList.add(new HamPizza());
+        pList.add(new CheesePizza());
+        pList.add(new Pizza());
+                
+        MyApplication.listPizza(pList);
+        // Se va afisa: "HamPizza", "CheesePizza", "Pizza"
+    }
+}
+</code>
+
+Sintaxa //List<? extends Pizza>// impune ca tipul elementelor listei să fie //Pizza// sau o subclasă a acesteia. Astfel, //pList// ar fi putut avea, la fel de bine, tipul //List<HamPizza>// sau //List<CheesePizza>//. În mod similar, putem imprima constrângerea ca tipul elementelor listei să fie //Pizza// sau o superclasă a acesteia, utilizand sintaxa //List<? super Pizza>//.
+Observație: Trebuie reținut faptul că **în continuare nu putem introduce valori** într-o colecție ce folosește //bounded wildcards// și este dată ca parametru unei funcții.
+
+== Metode generice ==
+
+Java ne oferă posibilitatea scrierii de metode generice (deci având un tip-parametru) pentru a facilita prelucrarea unor structuri generice (date ca parametru).
+Să exemplificăm acest fapt. Observăm în continuare 2 căi de implementare ale unei metode ce copiază elementele unui vector intrinsec într-o colecție:
+
+<code java>
+// Metoda corecta
+static <T> void correctCopy(T[] a, Collection<T> c) {
+    for (T o : a)
+        c.add(o); // Operatia va fi permisa
+}
+
+// Metoda incorecta
+static void incorrectCopy(Object[] a, Collection<?> c) {
+    for (Object o : a)
+        c.add(o); // Operatie incorecta, semnalata ca eroare de catre compilator
+}
+</code>
+
+Trebuie remarcat faptul că //correctCopy()// este o metodă validă, care se execută corect, însă //incorrectCopy()// nu este, din cauza limitării pe care o cunoastem deja, referitoare la adăugarea elementelor într-o colecție generică cu tip specificat. Putem remarca, de asemenea, că, și în acest caz, putem folosi //wildcards// sau //bounded wildcards//. Astfel, urmatoarele declaratii de metode sunt corecte:
+
+<code java>
+// O metoda ce copiaza elementele dintr-o lista in alta lista
+public static <T> void copy(List<T> dest, List<? extends T> src) { ... }
+
+// O metoda de adaugare a unor elemente intr-o colectie, cu restrictionarea tipului generic
+public <T extends E> boolean addAll(Collection<T> c);
+</code>
+
+== Exerciții ==
+
+  - (6p) Implementați o **coadă de priorități** care acceptă doar //tipuri comparabile// (descendente din ''java.lang.Comparable''). Folosiți coada pentru a **sorta în ordine crescătoare** o serie de valori (veți testa valori numerice, generate aleator). Utilizați //bounded wildcards//.
+    * (1p) Aveți grijă la tipul parametrului cozii pe care o implementați (este restricționat)
+    * (3p) Pentru păstrarea la orice moment a ordinii valorilor conținute în colecția voastră, puteți să implementați coada ca o listă simplu-înlănțuită, în care capul listei să fie cel mai "mic" element
+      * Vă puteți crea o clasă internă care să încapsuleze un nod de listă înlănțuită
+      * Atenție la adăugarea de noduri în coadă și la cazurile extreme
+    * (1p) Folosiți o **colecție generică** în care veți stoca valorile numerice inițiale (de adăugat)
+    * (1p) Implementați **o metodă generică** de copiere a valorilor din această colecție în coada de priorități.
+    * (**Bonus 3p**) Implementați colecția voastră ca //iterabilă//, compatibilă cu syntactic-sugar-ul **for-each**
+      * Trebuie să implementați interfața ''Iterable''; atenție, și ea este generică
+      * Creați-vă //iteratorul// (parametrizat!) ca o clasă internă care să rețină datele necesare (nodul din listă la care a ajuns, etc.)
+      * nu este necesar să implementați metoda ''remove'' din ''Iterator''
+      * Afișați-vă acum rezultatele folosind **for-each** pe coada voastră!
+  - (4p) Să considerăm interfața //Sumabil//, ce conține metoda ''void addValue(Sumabil value)''. Această metodă adună la valoarea curentă (stocată în instanța ce apelează metoda) o altă valoare, aflată într-o instanță cu același tip. Pornind de la această interfață, va trebui să:
+    * Definiți clasele //MyVector3// și //MyMatrix// (ce reprezintă un vector cu 3 coordonate și o matrice de dimensiune 4 x 4), ce implementează Sumabil
+    * Scrieți **o metodă generică** ce primește o colecție generică cu elemente de tipul //Sumabil// și returnează suma tuturor elementelor din colecție. Trebuie să utilizați //bounded types//. Care trebuie să fie, deci, antetul metodei?
+
+== Resurse ==
+* <html><a class="media mediafile mf_pdf" href="/poo/laboratoare/2013/lab8?do=export_pdf">PDF laborator</a></html>

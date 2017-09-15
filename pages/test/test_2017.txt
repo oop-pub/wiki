@@ -1,0 +1,33 @@
+= Test grilă, ianuarie 2017 =
+
+
+Au fost 20 de întrebări, 4 variante de răspuns, un singur răspuns corect. 4 numere, aceleași 20 de întrebări în ordine diferită.
+
+Metoda de evaluare: grilă franceză, -1/4 din punctajul unei întrebări la răspuns greșit, 0 dacă nu este marcat niciun răspuns.
+
+Analizăm aici întrebările pe rând, structurat pe secțiuni.
+
+== Basics ==
+
+
+
+== Constructori și referințe ==
+
+== Clase abstracte și interfețe ==
+
+== OOP ==
+
+
+== Clase interne == 
+
+== Colecții și genericitate ==
+== Excepții ==
+
+== Design patterns ==
+
+General disclaimer pentru intrebarile de design patterns din testele de până acum și cele viitoare:  
+
+La design patterns, unde lucrurile nu sunt fixe (e.g. pot implementa un pattern și într-o situație în care nu e recomandat deoarece mai mult încurcă designul sau afectează performanța) e recomandat să alegeți varianta în care vine cel mai ușor și natural de implementat, sau care prezintă o situație pentru care acel pattern este de obicei recomandat, chiar dacă considerați că și celelalte variante sunt aplicabile într-o anumită măsură. Dacă vi se pare că un exercițiu are mai multe variante corecte, restrangeți la cea mai evidentă de aplicat.
+
+
+

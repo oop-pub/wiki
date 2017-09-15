@@ -1,0 +1,239 @@
+= Excepții =
+
+* Responsabil: [[daniel.ciocirlan@gmail.com|Daniel Ciocîrlan]]
+* Data publicării: 1.12.2013
+* Data ultimei modificări: 4.12.2013
+
+==Introducere==
+**Ce este o excepţie?**
+În esenţǎ, o **excepţie** este un **eveniment** care se produce în timpul execuţiei unui program şi care **perturbǎ** fluxul normal al instrucţiunilor acestuia. De exemplu, în cadrul unui program care copiazǎ un fişier, astfel de evenimente excepţionale pot fi:
+* absenţa fişierului pe care vrem sǎ-l copiem
+* imposibilitatea de a-l citi din cauza permisiunilor insuficiente sau din cauza unei zone invalide de pe hard-disk
+* etc
+
+== Utilitatea conceptului de excepţie ==
+O abordare foarte des intâlnitǎ, ce precedǎ apariţia conceptului de excepţie, este întoarcerea unor valori **speciale** din funcţii, care sǎ desemneze situaţia apǎrutǎ. De exemplu, în C, funcţia fopen întoarce NULL dacǎ deschiderea fişierului a eşuat. Aceastǎ abordare are douǎ **dezavantaje** principale:
+*  câteodatǎ, **toate** valorile tipului de retur ale funcţiei pot constitui rezultate valide. De exemplu, dacǎ definim o funcţie care întoarce succesorul unui numar întreg, nu putem întoarce o valoare specialǎ în cazul în care se depǎşeşte valoarea maximǎ reprezentabilǎ (Integer.MAX_VALUE). O valoare specialǎ, ca -1, ar putea fi interpretatǎ ca numǎrul întreg -1.
+* **nu** se poate **separa** secvenţa de instrucţiuni corespunzǎtoare execuţiei **normale** a programului de secvenţele care trateaza **erorile**. Firesc ar fi ca fiecare apel de funcţie sǎ fie urmat de verificarea rezultatului întors, pentru tratarea corespunzǎtoare a posibilelor erori. Aceastǎ modalitate poate conduce la un cod foarte imbricat şi greu de citit, de forma:
+<code java>
+int openResult = open();
+if (openResult == FILE_NOT_FOUND) {
+    // handle error
+} else if (openResult == INUFFICIENT_PERMISSIONS) {
+    // handle error
+} else { // SUCCESS
+    int readResult = read();
+    if (readResult == DISK_ERROR) {
+        // handle error
+    } else { // SUCCESS
+        ...
+    }
+}
+</code>
+Mecanismul bazat pe excepţii înlaturǎ ambele neajunsuri menţionate mai sus. Codul ar arǎta aşa:
+<code java>
+try {
+    open();
+    read();
+    ...
+} catch (FILE_NOT_FOUND) {
+    // handle error
+} catch (INUFFICIENT_PERMISSIONS) {
+    // handle error
+} catch (DISK_ERROR) {
+    // handle error
+}
+</code>
+Se observǎ includerea instrucţiunilor ce aparţin fluxului normal de execuţie într-un bloc **try**, şi precizarea condiţiilor excepţionale posibile la sfârşit, în câte un bloc **catch**. **Logica** este urmǎtoarea: se executǎ instrucţiune cu instrucţiune secvenţa din blocul try şi, la apariţia unei situaţii excepţionale, semnalate de o instrucţiune, **se abandoneazǎ** restul instrucţiunilor rǎmase neexecutate şi **se sare** direct la blocul catch corespunzǎtor. 
+
+==Excepţii în Java==
+Când o eroare se produce într-o funcţie, aceasta creeazǎ un **obiect excepţie** şi il paseazǎ cǎtre ''runtime system''. Un astfel de obiect conţine informaţii despre situaţia apǎrutǎ:
+* **tipul** excepţie
+* **stiva de apeluri** (stack trace): punctul din program unde a intervenit excepţia, reprezentat sub forma lanţului de metode (obţinut prin invocarea succesivǎ a metodelor din alte metode) in care programul se aflǎ în acel moment.
+Pasarea menţionatǎ mai sus poartǎ numele de **aruncarea** (throwing) unei excepţii. 
+
+==Aruncarea excepţiilor==
+Exemplu de **aruncare** a unei excepţii:
+<code java>
+List<String> l = getArrayListObject();
+if (l == null)
+    throw new Exception("The list is empty");
+</code>
+În acest exemplu, încercǎm sǎ obţinem un obiect de tip ''ArrayList''; dacǎ funcţia ''getArrayListObject'' întoarce null, aruncǎm o excepţie.
+Pe exemplul de mai sus putem face urmǎtoarele observaţii:
+* un **obiect-excepţie** este un obiect ca oricare altul, şi se instanţiazǎ la fel (folosind ''new'')
+* aruncarea excepţiei se face folosind cuvântul cheie **throw**
+* existǎ clasa [[http://docs.oracle.com/javase/7/docs/api/java/lang/Exception.html|Exception]] care desemneazǎ comportamentul specific pentru excepţii.
+În realitate, clasa ''Exception'' este pǎrintele majoritǎţii claselor excepţie din Java. Enumerǎm câteva excepţii standard:
+* [[http://docs.oracle.com/javase/7/docs/api/java/lang/IndexOutOfBoundsException.html|IndexOutOfBoundsException]]: Este aruncatǎ când un index asociat unei liste sau unui vector depǎşeşte dimensiunea colecţiei respective.
+* [[http://docs.oracle.com/javase/7/docs/api/java/lang/NullPointerException.html | NullPointerException]]: Este aruncatǎ când se acceseazǎ un obiect neinstanţiat (''null'').
+* [[http://docs.oracle.com/javase/7/docs/api/java/util/NoSuchElementException.html | NoSuchElementException]]: Este aruncatǎ când se apeleazǎ next pe un ''Iterator'' care nu mai conţine un element urmǎtor.
+În momentul în care se instanţiazǎ un obiect excepţie, în acesta se reţine întregul lanţ de apeluri de funcţie, prin care s-a ajuns la instrucţiunea curentǎ. Aceastǎ succesiune se numeşte **stack trace**, şi se poate afişa prin apelul [[http://docs.oracle.com/javase/1.4.2/docs/api/java/lang/Throwable.html#printStackTrace() |e.printStackTrace()]] unde este obiectul excepţie.
+
+==Prinderea excepţiilor==
+Când o excepţie a fost aruncatǎ, ''runtime system'' încearcǎ sǎ o trateze (**prindǎ** - ''catch''). Tratarea (sau **prinderea**) unei excepţii este fǎcutǎ de o porţiune de cod **specialǎ**.
+* Cum definim o astfel de porţiune de cod **specialǎ**?
+* Cum specificǎm faptul cǎ o porţiune de cod specialǎ trateazǎ o **anumitǎ** excepţie?
+Sǎ observǎm urmǎtorul exemplu:
+<code java>
+public void f() throws Exception {
+    List<String> l = null;
+        
+    if (l == null)
+        throw new Exception();
+}
+
+public void catchFunction() {
+    try {
+        f();
+
+    } catch (Exception e) {
+        System.out.println("S-a generat o exceptie");
+    }
+}
+</code>
+Se observǎ cǎ, dacǎ o funcţie aruncǎ o excepţie şi **nu** o prinde, trebuie, în general, sǎ adauge **clauza throws** în antet.
+Funcţia ''f'' va arunca întotdeauna o excepţie (din cauza cǎ ''l'' este mereu ''null''). Observaţi cu atenţie funcţia ''catchFunction'':
+* în interiorul sǎu a fost definit un bloc ''try'', în interiorul cǎruia se apeleazǎ ''f''. În general, pentru a **prinde** o excepţie, trebuie sǎ specificǎm o zonǎ în care aşteptǎm ca excepţia sǎ se producǎ (''guarded region''). Aceastǎ zonǎ este introdusǎ prin ''try''.
+* în continuare, avem blocul ''catch'' (''Exception e''). La producerea excepţiei, blocul ''catch'' corespunzǎtor va fi executat. În cazul nostru, se va afişa mesajul ''"S-a generat o excepţie"''.
+Observaţi urmǎtorul exemplu:
+<code java>
+public void f() throws MyException, WeirdException {
+    List<String> l = null;
+                
+    if (l == null)
+        throw new MyException();
+
+    throw new WeirdException("This exception never gets thrown");
+}
+
+public void catchFunction() {
+    try {
+        f();                    
+    
+    } catch (MyException e) {
+        System.out.println("S-a generat o exceptie Null Pointer");
+    } catch (WeirdException e) {
+        System.out.println("S-a generat o exceptie ciudata");
+    }
+}
+</code>
+În acest exemplu, funcţia ''f'' a fost modificatǎ astfel încât sǎ arunce ''MyException''. Observaţi faptul cǎ, în ''catchFunction'' avem doua blocuri ''catch''. Cum excepţia aruncatǎ de ''f'' este de tip ''MyException'', numai primul bloc ''catch'' se va executa.
+Prin urmare:
+* putem specifica **porţiuni** de cod pentru **tratarea** excepţiilor folosind blocurile ''try'' si ''catch'';
+* putem defini **mai multe** blocuri catch pentru a implementa o tratare **preferenţiala** a excepţiilor, în 
+funcţie de tipul acestora.
+
+**Nivelul** la care o excepţie este tratatǎ depinde de logica aplicaţiei. Acesta **nu** trebuie sǎ fie neaparat nivelul imediat urmǎtor, ce invocǎ secţiunea generatoare de excepţii. Desigur, propagarea de-a lungul mai multor nivele (metode) presupune utilizarea clauzei ''throws''. Dacǎ o excepţie nu este tratatǎ nici în ''main'', aceasta va conduce la **încheierea** execuţiei programului! 
+
+==Blocuri try-catch imbricate==
+În general, vom dispune în acelaşi bloc ''try-catch'' instrucţiunile care pot fi privite ca înfǎptuind un acelaşi scop. Astfel, dacǎ **o** operaţie din secvenţa esueazǎ, se renunţǎ la instrucţiunile rǎmase şi se sare la un bloc ''catch''.
+Putem specifica operaţii opţionale, al cǎror eşec sǎ **nu influenţeze** întreaga secvenţǎ. Pentru aceasta folosim blocuri ''try-catch'' **imbricate**:
+<code java>
+try {
+    op1();
+
+    try {
+        op2();
+        op3();
+
+    } catch (Exception e) { ... }
+
+    op4();
+    op5();
+
+} catch (Exception e) { ... }
+</code>
+Dacǎ apelul ''op2'' eşueazǎ, se renunţǎ la apelul ''op3'', se executǎ blocul ''catch'' interior, dupǎ care se continuǎ cu apelul ''op4''.
+
+==Blocul finally==
+Presupunem cǎ, în secvenţa de mai sus, care deschide şi citeşte un fişier, avem nevoie sǎ închidem fişierul deschis, atât în cazul normal, cât şi în eventualitatea apariţiei unei erori. În aceste condiţii, se poate ataşa un bloc ''finally'' dupǎ ultimul bloc ''catch'', care se va executa în **ambele** cazuri menţionate.
+Secvenţa de cod urmǎtoare conţine o structurǎ ''try-catch-finally'':
+<code java>
+try {
+    open();
+    read();
+    ...
+} catch (FILE_NOT_FOUND) {
+    // handle error
+} catch (INUFFICIENT_PERMISSIONS) {
+    // handle error
+} catch (DISK_ERROR) {
+    // handle error
+} finally {
+    // close file
+}
+</code>
+Blocul ''finally'' se dovedeşte foarte util când în blocurile ''try-catch'' se gǎsesc instrucţiuni **return**. El se va executa şi în **acest** caz, exact înainte de execuţia instrucţiunii **return**, aceasta fiind executatǎ ulterior. 
+
+==Tipuri de excepţii==
+Nu toate excepţiile trebuie prinse cu ''try-catch''. Pentru a înțelege de ce, sǎ analizǎm clasificarea  excepţiilor din <imgref image1>:
+
+<imgcaption image1|Tipuri de excepții>{{:laboratoare:lab9:tipurideexceptii.png?400|}}</imgcaption>
+
+* **checked exceptions**, ce corespund clasei [[http://docs.oracle.com/javase/7/docs/api/java/lang/Exception.html|Exception]]: Acestea sunt excepţii pe care o aplicaţie bine scrisǎ ar trebui sǎ le **prindǎ**, şi sǎ permitǎ **continuarea** rulǎrii programului. Sǎ luǎm ca exemplu un program care cere utilizatorului un nume de fişier (pentru a-l deschide). În mod normal, utilizatorul va introduce un nume de fişier care existǎ şi care poate fi deschis. Existǎ insǎ posibilitatea ca utilizatorul sǎ greşeascǎ, caz în care se va arunca o excepţie ''FileNotFoundException''. Un program bine scris va prinde aceastǎ excepţie, va afişa utilizatorului un mesaj de eroare, şi îi va permite acestuia (eventual) sǎ reintroducǎ un nou nume de fişier.
+* **erori**, ce corespund clasei [[http://docs.oracle.com/javase/7/docs/api/java/lang/Error.html|Error]]: Acestea definesc situaţii excepţionale declanşate de factori **externi** aplicaţiei, pe care aceasta nu le poate anticipa şi nu-şi poate reveni, dacǎ se produc. Spre exemplu, tentativa de a citi un fişier care nu poate fi deschis din cauza unei defecţiuni hardware (sau eroare OS), va arunca ''IOError''. Aplicaţia poate încerca sǎ prindǎ aceastǎ excepţie, pentru a anunţa utilizatorul despre problema apǎrutǎ; dupǎ aceastǎ însǎ, programul va eşua (afişând eventual ''stack trace'').
+* **excepţii runtime**, ce corespund clasei [[http://docs.oracle.com/javase/7/docs/api/java/lang/RuntimeException.html|RuntimeException]]: Ca şi erorile, acestea sunt condiţii excepţionale, însǎ spre **deosebire** de **erori**, ele sunt declanşate de factori **interni** aplicaţiei. Aplicaţia nu poate anticipa, şi nu-şi poate reveni dacǎ acestea sunt aruncate. **Runtime exceptions** sunt produse de diverse bug-uri de programare (erori de logicǎ în aplicaţie, folosire necorespunzǎtoare a unui API, etc). Spre exemplu, a realiza apeluri de metode sau membri pe un obiect ''null'' va produce ''NullPointerException''. Fireşte, putem prinde excepţia. Mai **natural** însǎ ar fi sǎ **eliminǎm** din program un astfel de bug care produce excepţia.
+
+<note important>Excepţiile **checked** sunt cele **prinse** de blocurile ''try-catch''. Toate excepţiile sunt **checked** cu excepţia celor de tip **Error**, **RuntimeException** şi subclasele acestora.
+
+Excepţiile **error** nu trebuie (în mod obligatoriu) prinse folosind ''try-catch''. Opţional, programatorul poate alege sǎ le prindǎ.
+
+Excepţiile **runtime** nu trebuie (în mod obligatoriu) prinse folosind ''try-catch''. Ele sunt de tip **RuntimeException**. Aţi întâlnit deja exemple de excepţii runtime, în urma diferitelor neatenţii de programare: ''NullPointerException'', ''ArrayIndexOutOfBoundsException'' etc. Putem arunca o ''RuntimeException'' fǎrǎ sǎ o menţionǎm în clauza throws din antet:
+<code java>
+public void f(Object o) {
+    if (o == null)
+        throw new NullPointerException("o is null");
+}
+</code></note>
+
+==Definirea de excepţii noi==
+Când aveţi o situaţie în care alegerea unei excepţii (de aruncat) nu este evidentǎ, puteţi opta pentru a scrie propria voastrǎ excepţie, care sǎ extindǎ Exception, RuntimeException sau Error.
+Exemplu:
+<code java>
+class TemperatureException extends Exception {}
+
+class TooColdException extends TemperatureException {}
+
+class TooHotException extends TemperatureException {}
+</code>
+În aceste condiţii, trebuie acordatǎ atenţie **ordinii** în care se vor defini blocurile catch. Acestea trebuie precizate de la clasa excepţie cea mai **particularǎ**, pânǎ la cea mai **generalǎ** (în sensul moştenirii). De exemplu, pentru a întrebuinţa excepţiile de mai sus, blocul ''try-catch'' ar trebui sǎ arate ca mai jos:
+<code java>
+try {
+    ...
+
+} catch (TooColdException e) {
+    ...
+} catch (TemperatureException e) {
+    ...
+} catch (Exception e) {
+    ...
+}
+</code>
+Afirmaţia de mai sus este motivatǎ de faptul cǎ întotdeauna se alege **primul** bloc catch care se potriveşte. Un bloc catch referitor la o clasǎ excepţie **pǎrinte**, ca ''TemperatureException'' prinde şi excepţii de tipul claselor **copil**, ca ''TooColdException''. Poziţionarea unui bloc mai general **înaintea** unuia mai particular ar conduce la **ignorarea** blocului particular.
+
+==Excepţiile în contextul moştenirii==
+Metodele suprascrise (overriden) pot arunca **numai** excepţiile specificate de metoda din **clasa de bazǎ** sau excepţii **derivate** din acestea.
+
+==Exerciţii== 
+1. (**2p**)Modificaţi rezolvarea exerciţiului 1 din laboratorul de //Colecții//, astfel încât fiecare semnalare de eroare sǎ fie înlocuitǎ cu aruncarea unei excepţii.
+* Alegeţi excepţiile potrivite. Care este alegerea fireascǎ: excepţii **checked** sau **unchecked**? De ce?
+
+2. (**2p**)  Scrieţi o metodǎ (scurtǎ) care sǎ genereze [[http://docs.oracle.com/javase/7/docs/api/java/lang/OutOfMemoryError.html|OutOfMemoryError]] şi o alta care sǎ genereze [[http://docs.oracle.com/javase/7/docs/api/java/lang/StackOverflowError.html|StackOverflowError]].  Verificaţi posibilitatea de a continua rularea dupǎ interceptarea acestei erori. Comparaţi rǎspunsul cu posibilitatea de a realiza acelaşi lucru într-un limbaj compilat, ce ruleazǎ direct pe platforma gazdǎ (ca C).
+
+3. (**4p**)  Definiţi o clasǎ care sǎ implementeze operaţii pe numere întregi. Operaţiile vor arunca excepţii.
+* Scrieţi clasa ''Calculator'', ce conţine douǎ metode:
+  * ''add'': primeşte doi întregi şi întoarce un întreg
+  * ''divide'': primeşte doi întregi şi întoarce un întreg
+  * ''average'': primeşte o colecţie ce conţine obiecte ''Integer'', şi întoarce media acestora. Pentru calculul mediei, sunt folosite operaţiile ''add'' şi ''divide''.
+* Definiţi urmǎtoarele excepţii şi îmbogǎţiţi corespunzǎtor definiţia metodei ''add'':
+  * ''OverflowException'': este aruncatǎ dacǎ suma celor doua numere depǎşeşte ''Integer.MAX_VALUE''
+  * ''UnderflowException'': este aruncatǎ dacǎ suma celor doua numere este mai micǎ decat ''Integer.MIN_VALUE''
+* Care este alegerea fireascǎ: excepţii **checked** sau **unchecked**? De ce? Consideraţi cǎ, pentru un utilizator care doreşte efectuarea de operaţii aritmetice, **singurul** mecanism disponibil este cel oferit de clasa ''Calculator''.
+* Evidenţiaţi prin teste toate cazurile posibile care genereazǎ excepţii.
+
+4. (**2p**) Demonstraţi într-un program execuţia blocului ''finally'' chiar şi în cazul unui ''return'' din metoda.
+
+== Resurse ==
+* {{| Soluții}}
+* <html><a class="media mediafile mf_pdf" href="/poo/arhiva/laboratoare/2013/lab9?do=export_pdf">PDF laborator</a></html>

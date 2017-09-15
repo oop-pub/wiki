@@ -1,0 +1,135 @@
+=Double Dispatch - scurt tutorial=
+
+Double-dispatch este o tehnică folosită în modelarea orientată-obiect atunci când avem de a face cu două categorii de obiecte (fiecare categorie conținând obiecte de tipuri diferite), între care există o interacțiune.
+
+===Scenariu===
+
+Ca exemplu, fie aceste categorii de obiecte ''A'' și ''B'', respectiv. Din punct de vedere obiectual, ierarhia de clase ''A'' conține clasa ''A'' și clasele ''A1'' și ''A2'' ca subclase ale lui ''A''. Fie, de asemenea, o ierarhie identică pentru ''B''. Ne dorim ca orice obiect de tip ''A'' să poată interacționa cu orice obiect de tip ''B'', dar în mod diferit. Cu alte cuvinte, interacțiunea dintre un ''A1'' și un ''B2'' să fie diferită de cea dintre un ''A1'' cu un ''B1'' sau de cea dintre un ''A'' cu un ''B2''. Presupunem, fără a restrânge generalitatea, că obiectele ''A'' sunt cele care "acționează" efectiv asupra obiectelor ''B''.
+
+===O posibilă soluție===
+
+O soluție care ar reieși imediat este în stilul următor. Toate obiectele de de tip ''A'' ar putea avea o metodă ''public void interactiWith(B b)'', ca în snippet-ul de cod următor:
+
+<code java>
+
+public class A {	
+	public void interactWith(B b) {
+		if (b instanceof B1){
+			B1 realb = (B1) b;
+			// ...
+			// action for B1
+		} else if (b instanceof B2){
+			B2 realb = (B2) b;
+			// ...
+			// action for B2
+		} else {
+			// ...
+			// action for B
+		}
+	}
+}
+</code>
+
+Dacă fiecare subclasă a lui ''A'' suprascrie metoda ''interactWith'' și tratează fiecare caz pentru tipul efectiv al parametrului, atunci soluția ar fi completă: fiecare obiect ''A'' ar avea propriile implementări pentru fiecare interacțiune, în funcție de tipul concret al obiectului ''B'' primit ca parametru.
+
+Soluția aceasta pare în regulă pentru scenariul nostru. Dar pentru că noi invățăm să gândim în perspectivă, ne punem întrebări: **ce se întâmplă dacă (e nevoie să) adăugăm clase noi în oricare dintre ierarhii? Cum arată codul pentru ierarhii mai mari?**
+
+Să răspundem pe rând: 
+
+  * Dacă adăugăm o nouă clasă în ierarhia ''A'', atunci ea trebuie să suprascrie metoda ''interactWith'', în același stil care tratează tipul efectiv al parametrului. Nu ar fi prea urât. Poate că ar fi, dacă avem multe tipuri ''B''.
+  * Dacă adăugăm o nouă clasă în ierarhia ''B'' (fie ea ''B3''), atunci trebuie ca fiecare clasă din ierarhia ''A'' să ia în calcul și noua variantă. Trebuie modificate //toate// metodele ''interactWith'', din //toată// ierarhia ''A'', cu un nou ''instanceof''. **Destul de urât.** Ce ne facem dacă avem 100 de clase ''A''?
+  * Cum arată codul pentru ierarhii mai mari? Cam ca în snippet-ul de mai jos: pentru că mereu descoperim o nouă nevoie de extindere, adăugăm câte un caz nou. //Înmulțit cu numărul de clase ''A''//.
+
+<code java>
+boolean isPrime(int n) {
+// probably the dumbest way of testing a prime number
+// not even complete (not that it may ever be)
+	if (n == 2)
+		return true;
+	if (n == 3)
+		return true;
+	// ...
+	if (n == 160480967)
+		return true;
+	// ...
+	return false;
+}
+</code>
+
+Evident, ne trebuie ceva mai inteligent.
+
+===Double Dispatch===
+
+Să ne uităm încă o dată la soluția precedentă. Observăm că obiectele ''A'' "acționează" asupra obiectelor ''B'', fără ca obiectele ''B'' să aibă nicio "implicare". Obiectele ''B'' sunt doar pasate ca parametri la metodele obiectelor ''A'' iar fiecare obiect ''A'' procesează, în mod [[http://en.wikipedia.org/wiki/Polymorphism_(computer_science)#Subtyping|polimorfic]], parametrul după implementarea proprie:
+
+<code java>
+A a = new A1();
+B b = new B2();
+a.interactWith(b); // se execută blocul aferent action B2 din clasa A1
+</code>
+
+Să încercăm să "implicăm" și obiectele ''B''. Dacă ne gândim că obiectele ''A'' interacționează cu obiectele ''B'', ne putem gândi și că obiectele ''B'' "acceptă" interacțiunea. Fie astfel următoarea implementare:
+
+<code java>
+public class B {
+
+	void accept(A a) {
+		a.interactWith(this);
+	}
+}
+
+class B1 extends B {
+	void accept(A a) {
+		a.interactWith(this);
+	}
+}
+
+class B2 extends B {
+	void accept(A a) {
+		a.interactWith(this);
+	}
+}
+</code>
+
+Să ne gândim ce s-ar întâmpla dacă am avea următorul snippet (analog cu cel precedent, puțin schimbat):
+
+<code java>
+A a = new A1();
+B b = new B2();
+b.accept(a);
+</code>
+
+**Întrebarea 1:** Ar avea, oare, același efect ca mai devreme? De ce? Încercați!
+
+Schimbarea mai mare intervine la clasele ''A''. Să spargem implementarea ''interactWith(B b)'', mutând codul din fiecare bloc ''instanceof'' în metode separate, ca în exemplul următor:
+
+<code java>
+void interactWith(B b) {
+// action for B
+}
+
+void interactWith(B1 b) {
+// action for B1
+}
+
+void interactWith(B2 b) {
+// action for B2
+}
+</code>
+
+**Întrebarea 2**: să ne gândim la snippet-ul anterior și să observăm ce se întâmplă la apelul ''b.accept(a)'': ''b'' fiind de fapt un ''B2'', se va apela ''accept'' din clasa ''B2'', care cheamă ''a.interactWith(this)'', ''this'' fiind un ''B2''. Se va apela deci una dintre metodele ''interactWith(B2 b)'', dar din care clasă ''A''? De ce?
+
+Am ajuns deci să avem:
+
+  * câte o metodă ''interactWith'' în fiecare clasă ''A'', pentru fiecare tip ''B'' în parte
+  * câte o metodă ''accept(A a)'' în fiecare clasă B
+
+Ne folosim, astfel, de tipurile concrete ale obiectelor care interacționează, **fără să testăm efectiv tipurile adevărate** în cod. Astfel, gândind în perspectivă, să răspundem la aceleași întrebări:
+
+  * Dacă adăugăm o nouă clasă în ierarhia ''A'', atunci ea trebuie să suprascrie toate metodele ''interactWith''. Oricum va trebui să implementeze operațiile diferite pentru fiecare ''B'' în parte, iar **modularizarea este un plus**.
+  * Dacă adăugăm o nouă clasă în ierarhia ''B'' (fie ea ''B3''), trebuie să suprascrie metoda ''accept(A a)'', a cărei implementare va fi o singură linie: ''a.interactWith(this)'' => trebuie ca fiecare clasă ''A'' să aibă o nouă metodă ''interactWith(B3 b)''.
+  * Cum arată codul pentru ierarhii mai mari? **Structurat și organizat**:
+    * fiecare clasă ''A'' are propriile implementări de interacțiuni, pe care, la nevoie, le putem modifica imediat, punctual, fără să căutăm în ''instanceof''-uri
+    * nu mai facem **absolut niciun test de tip concret** pentru obiectele care interacționează; un mare beneficiu din punctul de vedere al extensibilității
+
+De ce se numește acest mecanism double dispatch? //Dispatch// este termenul folosit atunci când gândim ca mașina virtuală Java și ne referim la metoda //concretă// care se apelează la un moment dat. //Double// pentru că interacțiunea observăm că funcționează în ambele sensuri: ''B''-urile cheamă metoda proprie, concretă de ''accept'', care apelează metoda concretă ''interactWith'' din clasa ''A''.

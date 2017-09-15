@@ -1,0 +1,31 @@
+= Proiect Eclipse =
+
+* Responsabil: Laurențiu Stamate
+* Data publicării: 09.10.2016
+* Data ultimei modificări: 11.11.2016
+
+<note important>Înainte de parcurgerea acestei resurse, asigurați-vă că ați parcurs [[resurse-utile:instalare-eclipse]]</note>
+
+{{ :resurse-utile:proiect-eclipse:eclipse_01.png?nolink |}}
+{{ :resurse-utile:proiect-eclipse:eclipse_02.png?nolink |}}
+{{ :resurse-utile:proiect-eclipse:eclipse_03.png?nolink |}}
+
+<note tip>La crearea proiectului, va trebui să setăm versiunea JDK-ului pe care dorim să îl folosim.</note>
+
+{{ :resurse-utile:proiect-eclipse:eclipse_04.png?nolink |}}
+{{ :resurse-utile:proiect-eclipse:eclipse_05.png?nolink |}}
+
+<note tip>După ce am creat proiectul, va trebui să apăsăm butonul **Restore** din stânga sus.</note>
+
+{{ :resurse-utile:proiect-eclipse:eclipse_06.png?nolink |}}
+
+<note tip>Pentru a inițializa clasa pe care dorim să o creăm cu metoda **main**, va trebui să bifăm primul checkbox.</note>
+
+{{ :resurse-utile:proiect-eclipse:eclipse_07.png?nolink |}}
+{{ :resurse-utile:proiect-eclipse:eclipse_08.png?nolink |}}
+
+<note tip>Vom vedea mai jos cum putem crea alte clase pentru a ne putea extinde funcționalitatea aplicațiilor.</note>
+
+{{ :resurse-utile:proiect-eclipse:eclipse_09.png?nolink |}}
+{{ :resurse-utile:proiect-eclipse:eclipse_10.png?nolink |}}
+{{ :resurse-utile:proiect-eclipse:eclipse_11.png?nolink |}}

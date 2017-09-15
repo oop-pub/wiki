@@ -1,0 +1,12 @@
+= Instalare IntelliJ Idea =
+
+* Responsabil: Laurențiu Stamate
+* Data publicării: 09.10.2016
+* Data ultimei modificări: 29.10.2016
+
+
+- [[resurse-utile:instalare-intellij-idea:windows]]
+
+- [[resurse-utile:instalare-intellij-idea:ubuntu]]
+
+- [[resurse-utile:instalare-intellij-idea:macos]]

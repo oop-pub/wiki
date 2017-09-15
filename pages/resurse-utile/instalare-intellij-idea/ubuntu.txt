@@ -1,0 +1,77 @@
+= Instalare IntelliJ Idea (Ubuntu 15.10) =
+
+* Responsabil: Laurențiu Stamate
+* Data publicării: 29.10.2016
+* Data ultimei modificări: 29.10.2016
+
+1. Deschideți un Terminal.
+2. Adăugați locația kit-ului de instalare pentru Java 8 în repository-ul local.
+<code bash>
+$ sudo add-apt-repository ppa:webupd8team/java 
+</code>
+
+{{ :resurse-utile:instalare-jdk:ubuntu:jdk_01.png?nolink |}}
+
+3. Actualizați repository-ul local.
+<code bash>
+$ sudo apt-get update 
+</code>
+
+{{ :resurse-utile:instalare-jdk:ubuntu:jdk_02.png?nolink |}}
+
+4. Descărcați kit-ul de instalare pentru Java 8.
+<code bash>
+$ sudo apt-get install oracle-java8-installer 
+</code>
+
+{{ :resurse-utile:instalare-jdk:ubuntu:jdk_03.png?nolink |}}
+{{ :resurse-utile:instalare-jdk:ubuntu:jdk_04.png?nolink |}}
+{{ :resurse-utile:instalare-jdk:ubuntu:jdk_05.png?nolink |}}
+
+5. Setați Java 8 ca implicit.
+<code bash>
+$ sudo apt-get install oracle-java8-set-default 
+</code>
+
+{{ :resurse-utile:instalare-jdk:ubuntu:jdk_06.png?nolink |}}
+
+
+6. Pentru instalarea IntelliJ Idea vom folosi [[ https://wiki.ubuntu.com/ubuntu-make | Ubuntu Make]] și vom adăuga locația kit-ului de instalare în repository-ul local.
+<code bash>
+$ sudo add-apt-repository ppa:ubuntu-desktop/ubuntu-make
+</code>
+
+{{ :resurse-utile:instalare-intellij-idea:ubuntu:intellij_01.png?nolink |}}
+
+7. Actualizați repository-ul local.
+<code bash>
+$ sudo apt-get update 
+</code>
+
+{{ :resurse-utile:instalare-intellij-idea:ubuntu:intellij_02.png?nolink |}}
+
+8. Instalați Ubuntu Make.
+<code bash>
+$ sudo apt-get install ubuntu-make
+</code>
+
+{{ :resurse-utile:instalare-intellij-idea:ubuntu:intellij_03.png?nolink |}}
+
+8. Instalați IntelliJ Idea.
+<code bash>
+$ umake ide idea-ultimate
+</code>
+
+{{ :resurse-utile:instalare-intellij-idea:ubuntu:intellij_04.png?nolink |}}
+{{ :resurse-utile:instalare-intellij-idea:ubuntu:intellij_05.png?nolink |}}
+{{ :resurse-utile:instalare-intellij-idea:ubuntu:intellij_06.png?nolink |}}
+
+6. Pentru activare, urmați [[ resurse-utile:activare-intellij-idea | instrucțiunile de activare]].
+
+{{ :resurse-utile:instalare-intellij-idea:ubuntu:intellij_07.png?nolink |}}
+{{ :resurse-utile:instalare-intellij-idea:ubuntu:intellij_08.png?nolink |}}
+{{ :resurse-utile:instalare-intellij-idea:ubuntu:intellij_09.png?nolink |}}
+{{ :resurse-utile:instalare-intellij-idea:ubuntu:intellij_10.png?nolink |}}
+{{ :resurse-utile:instalare-intellij-idea:ubuntu:intellij_11.png?nolink |}}
+{{ :resurse-utile:instalare-intellij-idea:ubuntu:intellij_12.png?nolink |}}
+{{ :resurse-utile:instalare-intellij-idea:ubuntu:intellij_13.png?nolink |}}

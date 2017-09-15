@@ -1,0 +1,23 @@
+= Programare Orientată pe Obiecte =
+
+== Informații ==
+
+[[administrativ:echipa|]]
+
+[[administrativ:regulament | Regulament]]
+
+[[https://docs.google.com/spreadsheets/d/1Q3UHk8IC6EsmgyTD3StvHccFlgUG2LSooYlPCQk_p8E/pubhtml| Catalog Note]]
+
+
+<ifauth @user>
+
+== Intern ==
+
+[[:intern:regulament| Ghidul asistenților]]\\
+[[:intern:conventii| Ghid editare wiki]]\\
+
+
+</ifauth>
+
+
+

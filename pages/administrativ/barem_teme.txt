@@ -1,0 +1,66 @@
+= Indicații pentru teme =
+
+Temele urmăresc exersarea cunoștințelor și abilităților voastre.
+
+Așadar, urmărim nu doar cod care "merge". Rezolvările voastre trebuie să nu fie //predispuse// la erori și să poată fi citite/parcurse/înțelese cu ușurință.
+
+De asemenea, urmărim aplicarea principiilor OO. Acesta este unul dintre scopurile materiei și depășește limbajul de programare cu care lucrăm. Șansele sunt ca majoritatea codului pe care îl veți scrie ca software engineers să fie orientat-obiect. Vom urmări cu strictețe respectarea acestor principii în temele voastre.
+
+== Recomandări ==
+
+  * Alocați suficient timp temelor. E improbabil ca o rezolvare într-un all-night coding sprint să fie de calitate.
+  * Nu scrieți codul din prima, ci alocați timp abordării și design-ului.
+  * Fiți consecvenți unui [[administrativ:coding_style_ide|coding style]].
+  * Când scrieți README-ul pentru teme:
+    * nu reproduceți cerințele din enunț și/sau comentariile din cod
+    * explicați ideile, deciziile și abordările voastre
+    * exprimați-vă //concentrat// = clar și concis
+    * formatați-l corespunzător - linii de 80 de caractere max, paragrafe, etc
+  * Folosiți cu încredere forumurile pentru orice: neclarități, coding style, best practices, etc.
+  * Testați-vă tema dincolo de testele automate. Putem avea teste private.
+  * Folosiți principiile //Object Oriented//:
+    * păstrați încapsularea
+    * folosiți polimorfismul
+    * abstractizați și programați [[http://www.javapractices.com/topic/TopicAction.do?Id=194|"by contract"]]
+<note important>
+Disclaimer: șansele sunt ca temele să fie mai dificile decât laboratoarele.
+
+Pentru rezolvarea lor, deși nu vă cerem tehnici sau cunoștințe în plus față de laboratoare, va fi probabil nevoie de mai multa documentare individuală. 
+
+Vă stăm la dispoziție pe forumuri sau la email-urile de pe pagina principală.
+</note> 
+
+== Depunctări generale pentru teme ==
+
+Temele pe care le primim **trebuie să compileze și să ruleze** pentru a avea posibilitatea de punctaj non-zero. 
+
+Vom aplica mici depunctări legate de calitatea codului și a abordărilor temelor. Din 10 puncte:
+
+  * -0.2 warning-uri de compilare
+    * verificați import-urile, variabilele nefolosite, etc
+  * -0.2 linii mai lungi de 80 de caractere
+    * formatați-vă codul să fie ușor de citit și parcurs
+    * puteți folosi auto-formatter-ul IDE-ului pe care îl folosiți
+  * (variabil începând de la -0.1) cod duplicat
+  * -0.1 cod înghesuit sau prea spațiat
+  * (variabil, începând de la -0.1) hardcodări
+    * folosiți constante în locul valorilor numerice/String-urilor literali
+  * -0.1 tab-uri amestecate cu spații pentru indentare sau indentare inconsecventă (ba un tab, ba mai multe)
+    * IDE-ul vă ajută, folosiți formatarea IDE-ului
+  * -0.1 surse nesemnate
+    * IDE-ul vă ajută să vă generați comentarii Javadoc cu numele autorului predefinit
+  * -0.1 metode lungi (> 150 de linii) în situații în care ar putea fi mai scurte 
+  * (variabil, începând de la -0.2) metode kilometrice (> 300 de linii), bucăți mari de logică în main etc
+  * -0.1 bucăți de cod comentat
+  * (variabil, începând de la -0.1) comentarii absente sau irelevante
+  * -0.1 denumire nepotrivită pentru metode, variabile, clase
+  * (variabil, în funcție de alocarea punctajului fiecărei teme) Readme necorespunzător, lipsă, conținut irelevant, etc
+  * (variabil, începând de la -0.1) ruperea încapsulării, folosirea incorectă a modificatorilor de acces
+  * -0.1 instanceof-uri și teste de tip
+    * folosiți polimorfismul în schimb
+  * (variabil, începând de la -0.2) Javadoc necorespunzător, incomplet, irelevant; inclus și documentarea lipsă sau incorectă a parametrilor metodelor
+  * -0.1 lipsă Javadoc generat  sau script de generare
+  * (variabil, -0.2 până la -2 sau peste) design rigid, greoi, inextensibil, bug-prone
+  * -0.1 folosirea tipurilor "raw" în loc de tipurile parametrice (generic) e.g. ''new ArrayList()'' în loc de ''new ArrayList<String>()''
+
+Lista nu este exhaustivă. Evaluatorii pot aplica depunctări mai mari decât cele prezentate aici, în funcție de numărul de apariții ale greșelilor sau de gravitatea lor.

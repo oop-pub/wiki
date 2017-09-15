@@ -1,0 +1,7 @@
+= Activare licență IntelliJ Idea =
+
+* Responsabil: Laurențiu Stamate
+* Data publicării: 09.10.2016
+* Data ultimei modificări: 08.10.2016
+
+1. 

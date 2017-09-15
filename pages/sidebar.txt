@@ -1,0 +1,49 @@
+**Administrativ**
+
+* [[administrativ:regulament|Regulament]]
+* [[administrativ:echipa|Echipa]]
+* [[administrativ:barem_teme|Indicații pentru teme]]
+* [[administrativ:coding_style_ide|Recomandări cod]]
+
+**Laboratoare**
+
+* [[laboratoare:java-basics| Lab 01 - Java Basics]]
+* [[laboratoare:constructori-referinte | Lab 02 - Constructori și referințe]]
+* [[laboratoare:agregare-mostenire | Lab 03 - Agregare și moștenire]]
+* [[laboratoare:clase-abstracte-interfete | Lab 04 - Clase abstracte și interfețe]]
+* [[laboratoare:clase-interne | Lab 05 - Clase interne]]
+* [[laboratoare:visitor | Lab 06 - More OOP & Visitor]]
+* [[laboratoare:colectii |  Lab 07 - Colecții]]
+* [[laboratoare:genericitate | Lab 08 - Genericitate]]
+* [[laboratoare:exceptii | Lab 09 - JUnit & Excepții]]
+* [[laboratoare:design-patterns | Lab 10 - Design Patterns]]
+* [[laboratoare:design-patterns2 | Lab 11 - Design Patterns]]
+* [[laboratoare:recapitulare | Lab 12 - Recapitulare]]
+
+
+**Teme**
+
+**Resurse utile**
+* [[resurse-utile:instalare-intellij-idea| Instalare IntelliJ Idea ]]
+* [[resurse-utile:activare-intellij-idea| Activare IntelliJ Idea]]
+* [[resurse-utile:instalare-eclipse| Instalare Eclipse]]
+* [[resurse-utile:proiect-intellij-idea| Demo proiect IntelliJ Idea]]
+* [[resurse:proiect-eclipse | Demo proiect Eclipse]]
+
+**Alte resurse**
+
+* [[laboratoare:poo-java]]
+* [[laboratoare:organizare-acces]]
+* [[laboratoare:tutorial-doubledispatch]]
+* [[laboratoare:reflection | Reflection]] 
+* [[test:index| Teste grilă]]
+
+**Arhiva**
+
+[[arhiva:teme:2016:index|2016-2017]]
+
+[[arhiva:teme:2015:index|2015-2016]]
+
+[[arhiva:teme:2014:index|2014-2015]]
+
+[[arhiva:teme:2013:index|2013-2014]]

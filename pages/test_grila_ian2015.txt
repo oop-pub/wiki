@@ -1,0 +1,475 @@
+=Test grilă, ianuarie 2015=
+
+Au fost 20 de întrebări, 4 variante de răspuns, un singur răspuns corect. 4 numere, aceleași 20 de întrebări în ordine diferită.
+
+Metoda de evaluare: grilă franceză, -1/4 din punctajul unei întrebări la răspuns greșit, 0 dacă nu este marcat niciun răspuns.
+
+/*
+Analizăm aici întrebările în ordinea variantei A a testului.
+*/
+
+== Basics ==
+**1. Ce obținem la rularea următorului cod:**
+
+<code java>
+class A {
+  public static boolean val;
+  public A() { val = true; }
+  public static void print() {
+    System.out.println("First");
+  }
+}
+
+public class Main {
+  public static void main(String[] args) {
+    A a = null;
+    if (!a.val) a.print();
+    else System.out.println("Second");
+  }
+}
+</code>
+
+  * NullPointerException
+  * Second
+  * Eroare de compilare
+  * **First**
+
+**Explicație**: Programul e corect sintactic, deci eroarea de compilare cade. Ideea principală este că se pot accesa membrii statici pentru obiectele a căror valoare e ''null''. De ce funcționează: runtime-ul nu "dereferențiază" efectiv obiectul ''null'', ci accesează membrii //clasei// obiectului, pe baza tipului declarat. De aceea, nu se aruncă excepție și se printează "First".
+
+
+
+**2. Care afirmații sunt corecte? **
+
+
+//A) Statement-ul ''package'' poate fi pus doar pe prima linie necomentată dintr-un fișier
+B) Specificatorii de acces pentru clase externe sunt doar public și default
+C) Un fișier poate avea mai multe clase publice
+D) Este obligatoriu pentru un fișier sa conțină statement-ul package
+E) Un fișier poate avea mai multe statement-uri import //
+
+  * A, B, C, E
+  * **A, B, E**
+  * B, C, E
+  * A, B, D, E
+
+**Explicație**: să luăm afirmațiile pe rând:
+A) declararea pachetului poate fi doar prima linie necomentată de cod fără dubii, deci corect
+B) specificatorii pentru clase externe sunt doar public și default (adică fără modificator); ceilalți nu au sens decât în contextul unei alte clase (private, protected față de cine?) - corect
+C) un fișier poate avea **o singură** clasă publică - greșit
+D) dacă un fișier se află într-un pachet default, nu trebuie să aibă statement-ul package - greșit
+E) un fișier poate avea, desigur, mai multe import-uri (și este deseori cazul) - corect
+
+
+
+
+== Constructori, referințe ==
+
+**3. Ce afișează următorul cod:**
+
+<code java>
+class Shape {
+  public String type = " s ";
+  public Shape() { System.out.print("shape ");}
+}
+
+public class Rectangle extends Shape {
+  public Rectangle() { System.out.print("rectangle ");}
+  public static void main(String[] args) {
+    new Rectangle().go();
+  }
+
+  void go() {
+    type = "r ";
+    System.out.print(this.type + super.type);
+  }
+}
+</code>
+
+  * rectangle r s
+  * **shape rectangle r r**
+  * rectangle r r
+  * shape rectangle r s
+
+**Explicație**: Expresia ''new Rectangle()'' cheamă întâi super-constructorul, anume ''Shape()'', care printează "shape", după care se execută instrucțiunile din constructorul propriu al ''Rectangle'', care printează "rectangle". Apoi pe instanța de Rectangle se apelează metoda ''go'' din clasa Rectangle (ar trebui să fie clar), care setează ''type="r"''. Rectangle nu are un câmp ''type'' propriu, deci ''this.type'' și ''super.type'' vor avea aceeași valoare "r". Deducem deci că se va afișa "shape rectangle r r".
+
+
+**4. Ce afișează următorul program?**
+
+<code java>
+
+class Main {
+  public static void main(String[] args) {
+    Boolean b = new Boolean(true);
+    if (b.equals(true)) {
+      System.out.println("1");
+      b = false;
+      if (b == new Boolean(false)) {
+        System.out.println("2");
+      }
+    }
+  }
+}
+
+</code>
+
+  * **1**
+  * 12
+  * Eroare la compilare
+  * Nimic
+
+**Explicație**: codul compilează; singura potențială problemă ar fi atribuirea unei valori ''boolean'' (tip primitiv) unei variabile ''Boolean'' (tip referință), dar știm că Java face //autoboxing// (adică se creează un nou Boolean cu ''false'' în interiorul lui). **Esența întrebării este diferența dintre == și metoda ''equals''**. În mod clar ''b.equals(true)'' va fi adevărat, deci se va printa 1. Apoi, pentru că operatorul == compară referințele (adică verifică dacă cei doi operanzi sunt de fapt //același obiect//), ''b == new Boolean(false)'' va fi ''false'', deci nu se va printa și 2.
+
+
+
+
+== OOP ==
+
+**5. Care variantă reprezintă suprascrierea corectă a metodei: ''protected int computeX(int a, float b) {...}''?**
+
+  * ''int computeX(int a, float b) {...}''
+  * ''**public int computeX(int a, float b) {...}**''
+  * ''protected int computeX(Integer a, Float b) {...}''
+  * ''protected Integer computeX(int a, float b) {...}''
+
+**Explicație**: Întrebarea verifică cunoașterea regulilor pentru supracriere:
+* aceeși listă de argumente
+* același tip de return sau un subtip al acestuia
+* nu pot avea un modificator de acces mai restrictiv
+* pot arunca doar aceleași excepții, excepții derivate din acestea, sau excepții unchecked.
+
+În cazul de faţă suprascrierea este corectă dacă se păstrează aceeași semnătură (tip de întors, nume + parametri, deci variantele 3 și 4 sunt greșite), iar modificatorul de acces este cel puțin protected. Modificatorul default poate sau nu să fie mai vizibil decât protected (exercițiu - gândiți-vă la scenarii), fapt pentru care compilatorul interzice prima variantă ca fiind suprascriere (i.e. dacă adăugați adnotarea ''@Override'' veți primi eroare).
+
+
+**6. Ce afișează următorul cod (//Student// e o subclasă a //Person//, iar //Person// conține metoda //getName//)?**
+
+<code java>
+// intr-o metoda main
+Person s = new Student("Alice");
+Person p = new Person("Bob");
+InfoManager m = new InfoManager();
+System.out.println(m.printInfo(s) +"; " + m.printInfo(p));
+
+// in clasa InfoManager
+public String printInfo(Person p){
+  return "Person " + p.getName();
+}
+
+public String printInfo(Student s){
+  return "Student " + s.getName();
+}
+
+</code>
+
+  * Person Bob; Student Alice
+  * **Person Alice; Person Bob**
+  * Student Alice; Student Bob
+  * Student Alice; Person Bob
+
+**Explicație**: În lipsa altor detalii, ''getName()'' este aceeași metodă în clasele ''Person'' și ''Student'', care întoarce câmpul de tip ''String'' din obiect, nici nu am mai scris-o în întrebare pentru că am fost siguri că înțelegeți scenariul. Ce e important de dedus este //care// metodă ''printInfo'' se apelează pentru cele două obiecte ''s'' și ''p''. Răspunsul este simplu: se apelează acea metodă pentru care //tipurile parametrilor// coincid cu //tipurile declarate// ale obiectelor pasate efectiv. **A nu se confunda cu runtime dispatch-ul metodelor //suprascrise// în clase derivate**! În cazul nostru ambele obiecte erau declarate de tip ''Person'', deci se apela de două ori metoda ''printInfo(Person)'', o dată pentru Alice, o dată pentru Bob.
+Întrebara practic verifică că ştiţi că //metodele supraîncărcate(overloaded) sunt 'alese' la compile-time, iar cele suprascrise (overriden) la runtime.//
+
+
+
+**7. Ce se afișează? **
+
+<code java>
+class A {
+  int x;
+  public A() { init(0); }
+  protected void init(int x) { this.x = x; }
+}
+
+class B extends A {
+  public B() { init (super.x + 1); }
+  public void init(int x) { this.x = x + 1; }
+}
+
+public class Test {
+  public static void main(String[] args) {
+    A a = new B();
+    System.out.println(a.x);
+  }
+}
+</code>
+
+  * 0
+  * 2
+  * **3**
+  * 1
+
+**Explicație**: oh but why. De ce 3...
+
+E clar că variabila ''a'' va avea tipul ''B'' la //runtime//. Ce e important e ce se întâmplă la construcția obiectului ''B''. Constructorul lui ''B'' cheamă super-constructorul fără parametri, deși nu e scris explicit. Super-constructorul face ''init(0)''. Aici este foarte important. //Se cheamă funcția init din ''B''//. De ce? Înainte să se apeleze efectiv constructorul ''B'', runtime-ul alocă pe heap memorie aferentă unui obiect ''B'' și leagă toate numele metodelor la implementările efective, inclusiv ''init''-ul suprascris. Toate acestea, înainte să se apeleze efectiv constructorul. Metoda ''init'' se va chema deci din clasa ''B'', care face ''this.x = x+1''. Asta înseamnă că în acest moment, ''a.x = 1''. După apelul super-constructorului, se execută corpul propriu al constructorului ''B'', care face ''init(super.x + 1)''. Pentru că ''super.x = this.x = 1'', se cheamă deci init(2), care iarăși face ''this.x = 2 + 1'', de unde ''this.x = 3''. Cu această valoare se cedează controlul apelantului și deci ''a.x = 3''.
+
+Este recomandat ca în codul vostru să nu apelaţi metode polimorfice în constructori, tocmai din cauza unui astfel de comportament.
+
+
+== Clase abstracte și interfețe ==
+
+**8. Care afirmații sunt corecte? (Ci denotă clase, Ii denotă interfețe)**
+
+A) C1 extends I1;
+B) I1 extends I2, I3;
+C) I1 implements I2;
+D) C1 implements I1,I2;
+E) C1 extends C2, C3.
+
+  * A, B, C, E
+  * C, E
+  * B, D, E
+  * **B, D**
+
+**Explicație**: Este o întrebare standard despre fundamentele limbajului Java. Esențial este că o clasă //poate extinde o singură altă clasă și poate implementa oricâte interfețe, iar o interfață poate extinde oricâte alte interfețe//. 
+
+Afirmația E este deci greșită, deci pică din start 2 variante. Afirmațiile A și C iarăși nu au sens, o clasă //extinde// altă clasă și o interfață //extinde// altă interfață. Afirmația D este corectă și apare des în viața reală. Ce este potențial tricky la această întrebare este afirmația B, care este corectă. De ce este corectă: în virtutea implementării mai multor interfețe, compilatorul este doar interesat de adunat semnături de metode în cadrul interfețelor. Vă puteți pune întrebarea ce se întâmplă dacă I1 și I2 conțin aceeași semnătură de metodă și pe care dintre ele o moștenește I. Un răspuns (cu niște simplificări) e că nu contează; ceea ce contează este ca acea semnătură de metodă să se afle în I. Deci faptul că o interfață extinde mai multe alte intefețe cu semnături de metode potențial identice nu deranjează compilatorul, pentru că nu există și implementări diferite care să declanșeze eventuale ambiguități.
+
+
+** 9. Fie: **
+
+<code java>
+interface ITest {
+  protected int x = 10;
+  int y;
+  int z = 20;
+  abstract void foo();
+  final int f(int x);
+}
+</code>
+
+**Care linii din corpul interfeței (numerotate de la 1 la 5) sunt corecte?** 
+
+  * 1,3,5
+  * **3,4**
+  * 1,2,3
+  * 4
+
+**Explicație**: Esențial este faptul că //orice variabilă din corpul unei interfețe este automat (dedus) ''public static final'', iar metodele sunt implicit ''public abstract''//. Înarmați cu aceste cunoștințe, să luăm acum fiecare linie pe rând:
+
+  - ''protected'' și ''public'' (dedus) intră în contradicție - greșit
+  - ''y'' e final (implicit) și nu e inițializat - greșit
+  - corect
+  - puteți considera declarația un pleonasm, dar compilatorul nu este deranjat, ''abstract'' este oricum dedus - corect
+  - metodele din interfețe sunt prin definiție ''abstract''; final + abstract = compiler headbang - greșit.
+
+== Clase interne == 
+
+**10. Cu ce poate fi înlocuită linia (xxx) pentru a obține o instanță a B?**
+
+<code java>
+
+class A {
+  class B {}
+}
+
+// in main
+A a = new A();
+(xxx)
+
+</code>
+
+  * ''B b = new B();''
+  * ''A.B b = new B();''
+  * **''A.B b = new A().new B();''**
+  * ''A.B b = new a.B();''
+
+**Explicație**: Întrebare standard despre sintaxa Java la instanțierea unei clase interne //nestatice//. Corect este ''(obiect de tip A).new B()'', deci singura variantă care respectă această sintaxă este cea din bold.
+
+
+**11. Fie interfața ''Runnable'' cu singura metodă ''public void run()''. Clasa ''Thread'' are un constructor ce primește un ''Runnable'' ca parametru și expune o metodă ''public void start()''. Ce concluzie trageți de la următorul cod?**
+
+<code java>
+  new Thread(new Runnable() { 
+    public void run() { 
+      while(true) { 
+        System.out.println("Nyan cat!"); 
+      } 
+    } 
+  } ).start();
+</code>
+
+  * eroare de compilare, ''public void run()'' nu poate fi implementat "pe loc"
+  * **compilează și rulează fără probleme**
+  * eroare de compilare, ''new Runnable()'' este incorect sintactic, ''Runnable'' este o interfață
+  * eroare de compilare, ''new Thread(...).start()'' este incorect sintactic
+
+**Explicație:** scenariul din întrebare este un exemplu clasic de instanțiere a unei clase anonime (e un scenariu real, ''Thread'' și ''Runnable'' stau la baza multithreading-ului în Java). Expresia ''new Runnable()'' scrisă fără implementarea care ar urma ar fi într-adevăr o eroare de compilare (nu se pot instanția tipuri abstracte). **Dar**, ca și în explicația de la laboratorul de clase anonime, ''new Runnable() { public void run() {...} }'' spune de fapt compilatorului să creeze o nouă clasă care implementează ''Runnable'' și oferă implementarea cu Nyan Cat (lol), după care și creează un obiect de tipul respectiv. Cât despre ''new Thread(...).start()'', sintaxa e corectă. 
+
+
+**12. Ce cuvânt cheie introdus la (xxx) va permite compilarea programului:**
+
+<code java>
+abstract class A {
+  int x;
+  abstract void set();
+}
+
+public class Test {
+  public static void main(String args[]) {
+    (xxx) int num = 30;
+    A a = new A() {
+      public void set() {
+        x = num;
+      }
+    };
+  }
+}
+</code>
+
+  * public
+  * Nu este necesar niciun cuvânt cheie în plus pentru a permite compilarea corectă a programului.
+  * **final**
+  * static
+
+**Explicație:** //Pentru a folosi variabile locale din afara contextului (//scope//-ului) unei clase interne (cum e și cazul nostru), e necesar cuvântul cheie ''final''//. Motivul este layout-ul în memorie al claselor și variabilelor, iar ''final'' permite (prin copiere) și garantează accesul la valoarea corectă a variabliei ''x'' la orice moment. ''static'' și ''public'' nu au oricum sens pentru variabile locale, iar diferențierea dintre "nu e nevoie de modificator" și "final" este motivul precedent.
+
+
+== Colecții și genericitate ==
+
+**13. Dacă dorim să stocăm un șir de elemente fără duplicate într-o colecție fără să ne intereseze ordinea elementelor sau sortarea lor, clasa cea mai potrivită este**
+
+  * Vector
+  * HashMap
+  * **HashSet**
+  * TreeMap
+
+**Explicație**: Când auziți "fără duplicate", primul impuls trebuie să fie o implementare de ''Set'', deci deja ''Vector'' cade, iar ''HashSet'' este aproape sigur. Să ne uităm totuși și la celelalte variante. ''TreeMap'' ține minte chei comparabile, deci neinteresându-ne de ordinea elementelor, pică. ''HashMap'' poate fi de asemenea folosit ca și ''HashSet'' cu obiectele noastre ca și chei, dar pentru a-l folosi corect, trebuie să stocăm și valori asociate cheilor, cu toate că nu ne interesează efectiv. ''HashSet'' e deci varianta optimă.
+
+
+
+**14. Ce se întâmplă la rularea următorului cod:**
+
+<code java>
+
+String[] strings = {"hello", "world"};
+Object[] objects = strings;             // linia 2
+List<?> list = new ArrayList<Object>(); // linia 3
+for (Object obj : objects) {
+  System.out.println(obj);
+  list.add(obj);                        // linia 6
+}
+
+</code>
+
+  * **eroare de compilare la linia 6**
+  * afișează "hello" și "world" pe linii diferite
+  * eroare de compilare la linia 2
+  * eroare de compilare la linia 3
+
+**Explicație**: Linia 2 e corectă sintactic, deși dacă apoi încercăm ceva de tipul ''objects[1] = 1'' vom obține un ArrayStoreException la //runtime//. Linia 3 e perfect în regulă, pentru că ''ArrayList'' implementează ''List'' și wildcard-ul se potrivește cu ''Object''. Ce nu putem face e să apelăm metoda ''add'' pe variabila ''list'', pentru că la compilare nu se cunoaște tipul obiectelor conținute în listă. Doar ''null'' poate fi folosit ca parametru, pentru că ''null'' aparține oricărui tip referință.
+
+
+**15. Care dintre următoarele variante este corectă (compilează)?**
+
+  * ''ArrayList <Person>mylist = new ArrayList<Student>();''
+  * ''List <Person>mylist = new ArrayList<Student>();''
+  * **''List <Student>mylist = new ArrayList<Student>();''**
+  * ''ArrayList<Student>mylist = new ArrayList<Person>();''
+
+**Explicație**: Ideea cheie în această întrebare și în lucrul cu generics în general este că, de exemplu (exemplul nostru), dacă ''Student'' e subclasă a ''Person'', atunci ''ArrayList<Student>'' **nu** e subclasă a ''ArrayList<Person>'', deci atribuirea nu este corectă (un astfel de exemplu este și în [[:laboratoare:genericitate#genericitatea-in-subtipuri|laboratorul de genericitate]]). 
+
+Matching-ul tipului generic (cel dintre paranteze unghiulare) este făcut la compilare și singura variantă care trece de această verificare este varianta în bold. Am fi putut avea matching corect cu wildcard-uri, dar nu a fost cazul aici. Pentru mai multe detalii puteți să citiți despre //covarianță/contravarianță// și despre //type erasure// ca să înțelegeți motivele pentru care Java se comportă astfel.
+
+
+== Excepții == 
+
+**16. Despre excepțiile unchecked:**
+
+  * clasele lor nu pot fi extinse
+  * **pot să nu e declarate în clauzele throws ale metodelor și pot să nu fie prinse**
+  * trebuie declarate în clauza throws a metodelor care le pot arunca
+  * pot declarate în clauza throws a oricarei metode, dar nu pot fi prinse
+
+**Explicație**: Excepțiile unchecked derivă din ''RuntimeException''. Ca orice alt tip referință, se pot crea noi excepții unchecked după cum simțim nevoia, deci primul răspuns cade. Specificația lor include răspunsul de mai sus în bold, care este și cel corect. Excepțiile unchecked pot, dar //nu trebuie neapărat// să fie declarate în clauzele ''throws'' și pot, dar //nu trebuie neapărat// să fie prinse de blocurile try-catch.
+
+
+**17.**
+
+<code java>
+class A {
+  public int x = 0;
+}
+
+public A foo() {
+  A a = new A();
+  try { a.x = 1;
+    throw new NullPointerException();
+  } catch (Exception e) {
+    a.x = 2;
+    return a;
+  } finally { a.x = 3; }
+}
+</code>
+
+**Ce se întâmplă la:**
+
+<code java>
+A a = foo();
+System.out.println(a.x);
+</code>
+
+  * 2
+  * excepție NullPointerException neprinsă, catch-ul prinde doar excepțiile checked
+  * 1
+  * **3**
+
+**Explicație**: este o întrebare care necesită multă atenție și câteva cunoștințe cheie. La momentul aruncării excepției, a.x = 1. ''NullPointerException'' derivă din ''Exception'', deci va fi prinsă. În acel moment, a.x devine 2 și se va //marca obiectul ''a'' ca fiind cel pe care îl va întoarce funcția//. Atenție. Doar marcat. Este pusă pe stivă referința într-un loc special, într-un mod asemănător în care apelați funcții la IOCLA: puneți într-un registru valoarea de întors (pe care o puteți modifica de oricâte ori) și abia când executați instrucțiunea //ret// se poate folosi în blocul apelant. Instrucțiunea din bytecode este ''areturn''.
+
+Nu se cedează controlul apelantului încă, pentru că există un bloc ''finally'' care va trebui executat (știm că ''finally'' se execută no matter what). Blocul ''finally'' setează a.x la valoarea 3 //pe același obiect//, adică pe cel care va fi apoi întors. Abia atunci se cedează controlul apelantului. Se va printa 3.
+
+Nu aveați nevoie să cunoașteți toate detaliile, ci doar că nu se cedează controlul (nu se "iese din funcție") imediat ce se execută o instrucțiune ''return'' ca în C, ci doar după ce s-a executat codul din ''finally'', timp în care obiectelor care vor fi întoarse li se poate modifica starea internă. Cum e și cazul nostru.
+
+Există mari șanse să vă loviți de problema aceasta în cod scris de alte persoane. Problema vă pregătește pentru acest scenariu și aceste cunoștințe vă pot salva ore sau zile pierdute.
+
+
+
+== Design patterns, Junit, misc ==
+
+**18. Vrem să implementăm un framework de user interface. Cu ce design pattern am putea modela comportamentul de onClick -> doSomething pentru un element de tip buton oarecare?**
+
+  * Visitor
+  * Singleton
+  * Factory
+  * **Observer**
+
+**Explicație**: Factory este un pattern de //construcție de obiecte//, nu unul comportamental cum a fost descris în întrebare. Visitor este un pattern în care se pot parcurge și procesa în mod polimorfic structuri de date diverse, iar Singleton permite crearea unei singure instanțe de un anumit tip, deci niciuna nu are legătură cu scenariul din întrebare. Observer, în schimb, se potrivește perfect, pentru că dacă țineți minte, la elementele noastre observabile (de tip MyArrayList) înregistram observatori care se //declanșau (notificau)// atunci când executam o operație pe ele. Așa dorim să implementăm și comportamentul butoanelor: se înregistrează //listeneri//, adică observatori, iar la click să se creeze un obiect (//eveniment//) cu care să fie notificați și fiecare să-și ruleze un mecanism intern pe acel eveniment (procesare de date, afișare de conținut, navigare etc). Este chiar modelul real pe care se bazează aproape toate elementele interactive de UI existente (web, mobile, jocuri etc).
+
+
+
+**19. Care cuvânt dintre următoarele este rezervat în Java?**
+
+  * method
+  * unsigned
+  * **native**
+  * array
+
+**Explicație**: Cuvintele "method" și "array" pică imediat. "Unsigned" nu există în Java, iar "native" denumește metodele pe care le puteți scrie pentru a interfața cu programele scrise special pentru sistemul vostru (arhitectura de calcul, sistem de operare etc). Consultați laboratorul de Reflection. Nu aveați nevoie de informații detaliate despre ce face Java Native Interface, ci doar că există astfel de metode.
+
+
+
+
+
+**20. Fie următorul ters JUnit funcțional. Ce se va afișa în urma execuției lui?**
+
+<code java>
+
+public class Test {
+  @Before
+  public void before() { System.out.print("before:");}
+  
+  @Test
+  public void test1() { System.out.print("test1:");}
+  
+  @After
+  public void after() { System.out.print("after:");}
+  
+  @Test
+  public void test2() { System.out.print("test2:");}
+}
+</code>
+
+  * before:test1:test2:after:
+  * test1:test2:
+  * before:test1:before:test2:
+  * **before:test1:after:before:test2:after:**
+
+**Explicație**: întrebare simplă despre funcționarea JUnit. Fiecare test în parte este precedat de rularea metodei adnotată cu ''Before'' și succedată de rularea metodei adnotată cu ''After''.

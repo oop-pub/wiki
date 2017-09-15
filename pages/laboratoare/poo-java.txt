@@ -1,0 +1,123 @@
+= POO și Java =
+
+== Programarea Orientată pe Obiecte==
+
+Programarea Orientată pe Obiecte este o paradigmă de programare care utilizează **obiecte** și **interacțiuni** între acestea pentru a modela arhitectura unui program. 
+  
+ Până în anii '60, paradigma cea mai utilizată era cea a **programării structurate**. Programarea structurată este tipul de programare pe care l-ați folosit până acum, la cursul de Programare și la cel de SD. Această paradigmă constă în utilizarea **funcțiilor și procedurilor** pentru a realiza un program (cu eliminarea apelurilor GOTO). 
+  
+ Totuși, în anii '60, deja pe măsură ce programale deveneau din ce în ce mai mari, randamentul programatorilor scădea și în consecință TTM-ul (''time-to-market'') creștea. Stilul de programare structurată nu mai făcea față unor programe de dimensiuni mereu în creștere. 
+  
+ Fiecare paradigmă de programare propune un nivel de împărțire a taskului de realizat (adică a programului) în taskuri mai mici pentru a micșora complexitatea. 
+ Astfel, într-un program **monoprocedural**, unitatea de abstractizare este instrucțiunea. În programarea **structurată** este funcția/procedura. **Programarea Orientată Obiect** (POO) propune pentru acest lucru obiectul. Obiectele în POO modelează (sau ar trebui să modeleze dacă arhitectură aplicației este corectă) obiecte din lumea reală. 
+  
+ **Obiectele** din POO sunt **instanțe** ale unui tip de date numit **clasă**. Relația dintre clasă și obiect-instanță a acelei clase este exemplificată de relația între conceptul de masă și masă din sufragerie. Adică: 
+ * conceptul de masă implică existența anumitor caracteristici (un număr de picioare și un blat, totul de o anumită culoare) 
+ * conceptul de masă implică realizarea potențială a unor acțiuni (se poate mânca pe masă) 
+ * obiectul masă are caracteristicile respective (4 picioare, culoare neagră) 
+ * obiectul masă permite realizarea practică a acțiunilor respective (se poate mânca doar pe masă fizică, nu pe ideea de masă) 
+  
+ Ce remarcăm este că există niște tipare în lumea reală, care grupează în mintea noastră niște **atribute** ale obiectelor cu **acțiunile** lor, pentru a forma un tot ce definește obiectul respectiv. Pe acest concept, numit **încapsulare**, se sprijină programarea orientată obiect. 
+  
+ Folosirea POO permite realizarea de sisteme informatice de dimensiuni mărite, cu timpi de dezvoltare, testare și mentenanță reduși față de paradigmele anterioare. Totuși, pentru a creă un sistem funcțional este necesară înțelegerea corectă a conceptelor care stau în spatele POO. Cu aceste concepte se ocupă cursul și laboratoarele de POO. 
+
+== Platforma Java == 
+  
+ Programarea Orientată pe Obiecte se poate aplică în orice limbaj care permite acest lucru. Cele mai cunoscute asemenea limbaje astăzi sunt C++, Java, C#, chiar și PHP. În acest semestru vom ilustra conceptele de POO folosind limbajul Java. 
+  
+ Java a pornit că o platformă de programare pentru sisteme embedded. Țelurile principale ale proiectului erau: 
+ * **independența** de sistem 
+ * utilizarea **POO**. 
+ Astăzi, Java este folosită mai mult că o platformă pentru Internet și a atins o utilizare impresionantă. 
+  
+ Java este un mediu (platformă) de programare care constă în: 
+ * un **limbaj** de programare (Java) care descrie programatorului ce instrucțiuni sunt valide și ce face fiecare 
+ * un **compilator** (''javac.exe'' (Windows) / ''javac'' (Linux)) care transformă fișierul sursă într-un limbaj intermediar numit **bytecode** 
+ * o **mașină virtuală**, **Java Virtual Machine** (''JVM''), care permite transformarea codului intermediar în instrucțiuni executabile pe procesorul curent. 
+ * o **bibliotecă** puternică ce răspunde foarte bine nevoilor apărute în practică (''class library'') 
+  
+ **Workflowul** este următorul. Dezvoltatorul instalează **Java Development Kit** (''JDK'') care constă în principal din: 
+ * **Java Runtime Environment** (''JRE''), ce conține ''JVM'' 
+ * **compilator**. 
+ Compilatorul este aplicat codului scris și se obțin fișiere conținând bytecode. Aceste fișiere au în Java extensia ''.class''. 
+  
+ Diagrama, până acum, arată astfel: 
+  
+ ''Clasamea.java'' ----compilare---> ''Clasamea.class'' [ pe mașina de dezvoltare ] 
+  
+ Acest pas corespunde cu invocarea compilatorului astfel: 
+
+<code>
+javac Clasamea.java
+</code> 
+  
+ Apoi codul bytecode este distribuit (nu analizăm acum cum se face acest lucru) utilizatorului. El are instalat ''JRE'', care este mașina care interpretează bytecode-ul și îl transformă într-un flow de instrucțiuni pentru procesorul utilizatorului (există un ''JRE'' pentru fiecare procesor și sistem de operare folosit). 
+  
+ Diagrama arată așa: 
+  
+ ---------------------------------------------------------------------- 
+ | flow de bytecode | ------> | JRE | ----> | flow instrucțiuni native | 
+ ---------------------------------------------------------------------- 
+  
+ Pasul corespunde cu invocarea mașinii virtuale astfel: 
+  
+<code>
+java Clasamea
+</code> 
+  
+ Rezultatul instrucțiunilor native afectează flowul de instrucțiuni bytecode, astfel încât rolul ''JRE'' nu este doar o etapă de preprocesare. Nu se aplică o simplă transformare de instrucțiuni ca să se obțină o imagine, după care să se trimite imaginea de executabil nativ la procesor. Mașina virtuală "interpretează" tot timpul. Codul bytecode este numit interpretat din această cauză. 
+  
+Cel mai important avantaj în acest workflow este că permite obținerea **independenței** de sistem. Dezvoltatorul are nevoie de un compilator funcțional pentru platformă pe care face dezvoltarea, iar utilizatorii, pe orice patforma ar fi (sistem de operare, arhitectură hardware), pot utiliza programul cât timp au o mașină virtuală Java instalată pentru acea platformă. 
+  
+ Un dezavantaj este viteza scăzută a codului Java. Există overhead-ul implicat de acțiunile adiționale realizate de ''JRE'' tot timpul rulării programului. Pentru a combate acest dezavantaj au apărut compilatoare ''just-în-time'' (''JIT'') care permit transformarea bytecodeului în cod executabil la prima rulare a unei secvențe de instrucțiuni bytecode, apoi stocarea acestuia pentru refolosire. Aici mașina virtuală nu este folosită decât o dată. Modelul clasic este C#, care folosește acest artificiu încă de la apariția sa. (Întârzierea cauzată de prima pornire a aplicației .NET respective este vizibilă în multe cazuri). Rețineți că modelul clasic Java este unul cu compilator și interpretor (mașină virtuală). 
+  
+  
+ {{:laboratoare:lab1:jvm.gif?450| Flow-ul Java}} 
+
+
+== Hello World ==
+
+Pentru a începe dezvoltarea avem nevoie de ''JDK'' pe care îl găsim pe site-ul [[http://www.oracle.com/technetwork/java/javase/downloads/java-se-jdk-7-download-432154.html |oracle]]. ''JDK'' conține și ''JRE'' pentru procesorul curent, așa că putem testa aplicațiile pe mașină locală. 
+  
+ Pentru a seta variabilele de mediu în Linux adăugați următoarea linie în ''/etc/bash.bashrc'' (pentru a fi disponibil tuturor utilizatorilor): 
+<code bash> 
+  export JAVA_HOME=/usr/lib/jvm/java-<versiunea undefined> 
+</code> 
+  unde valoarea variabilei ''JAVA_HOME'' este calea către directorul unde aveți Java instalat. 
+  
+ Conform paradigmei POO, programul este compus din clase. Pentru a avea un entry point al programului (punct de început, cum este funcția ''main'' în C), trebuie să scriem o clasă: 
+
+<code java> 
+ class HelloWorld  { 
+     public static void main(String[] args) { 
+         System.out.println(aHello world!”); 
+     } 
+ } 
+</code> 
+  
+ Observăm că: 
+ * o clasă se definește prin listarea metodelor, cuprinse între acolade, după declararea ei prin cuvântul cheie ''class'' urmat de numele clasei. 
+ * semnătura functei de entry în program este: ''public static void main(String[] args)'' 
+ * intuim că linia ''System.out.println(aHello world”)'' va afișa mesajul de întâmpinare 
+  
+ Salvăm textul ca ''HelloWorld.java''. Compilăm programul cu: 
+
+<code>
+  javac HelloWorld.java 
+</code> 
+ Observăm apariția în directorul curent a unui fișier ''HelloWorld.class'' cu: 
+  dir (ls pentru Linux) 
+  
+ Pentru rulare: 
+
+<code>   java HelloWorld 
+</code> 
+ == Instalare Eclipse IDE == 
+  
+ Pentru Java există mai multe medii de dezvoltare dintre care noi recomandăm Eclipse datorită plugin-urilor disponibile. Eclipse oferă plugin-uri și pentru PHP, C/C++, Python etc. 
+  
+ Eclipse poate fi download-at de [[http://eclipse.org/downloads/ |aici]]. Pentru instalare vă recomandăm acest [[http://www.vogella.de/articles/Eclipse/article.html | tutorial]]. 
+
+==Download==
+* [[http://www.oracle.com/technetwork/java/javase/downloads/java-se-jdk-7-download-432154.html |JDK]]
+* [[http://eclipse.org/downloads/packages/eclipse-ide-java-developers/indigosr2 |Eclipse]]

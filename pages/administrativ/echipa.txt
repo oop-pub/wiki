@@ -1,0 +1,28 @@
+= Echipa =
+
+**Curs:**
+
+  * [[lorina@moon.ro | Lorina Negreanu]] - seria CA
+  * [[alexandru.olteanu@cs.pub.ro| Alexandru Olteanu]] - seria CD
+
+**Laborator:**
+  * [[adriana.draghici@cs.pub.ro | Adriana Drăghici ]]
+  * [[alexandru.razvan.c@gmail.com | Alexandru Căciulescu ]]
+  * [[p31andrei@gmail.com | Andrei Petre ]]
+  * [[andrei.vasiliu2211@gmail.com | Andrei Vasiliu ]]
+  * [[cristialexandru@ymail.com | Cristi Vasile ]]
+  * Dragos-Cosmin Dimitriu
+  * Laurențiu Piciu
+  * [[laurentiu.stamate@stud.acs.upb.ro | Laurențiu Stamate]]
+  * [[lucia.mcojocaru@gmail.com |Lucia Cojocaru ]]
+  * Mihaela Pînzaru
+  * Miruna-Stefania Barbu
+  * Razvan Chitu
+  * [[theo.stoican@gmail.com | Theodor Stoican]]
+
+**Colaboratori:**
+  * Cosmin Petrișor
+  * [[ daniel.ciocirlan1607@cti.pub.ro | Daniel Ciocîrlan ]]
+  * Diana Despa
+
+  

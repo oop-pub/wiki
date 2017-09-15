@@ -1,0 +1,372 @@
+= Subiecte test ianuarie 2014 = 
+
+==  POO + Java (principii, best practices, constructii ale limbajului, cuvinte cheie) ==
+**1.** Identificați afirmațiile corecte din următorul set: \\
+ A. O clasă imutabila nu permite existența de metode de tip "setter" publice (definite cu identificatorul de acces public) \\
+ B. Spre deosebire de variabile și metode, clasele nu pot fi definite ''private''. \\
+ C. Interfețele pot extinde alte interfețe. \\
+ D. După instantierea unui vector (de exemplu: ''new Object[10]''), indiferent de tipul elementelor, toate au valoarea null. 
+- A,B,C
++ C
+- B,C
+- B, D
+
+**R:** A - fals, nu exista aceasta retrictie, B - clasele interne pot fi private, C - adevarata, interfetele pot extinde alte interfete, D - falsă, in cazul //Object// se inițializează cu //null//, dar pentru boolean cu //false//,  int/short/bye cu 0 iar float/double cu 0.0. La test varinta corectă cu C aparea cu C, D -> a fost "anulata" intrebarea - considerată corectă pentru toți.
+
+**2.** Care dintre următoarele metode suprascrie metoda : ''public void suprascrie (int a, String b) {}''\\
+- ''public void suprascrie (String b, int a) {}'' \\
+- ''public String suprascrie (int a, String b) {}''\\
++ ''public void suprascrie (int integer, String string) {}''\\
+- ''public void suprascrie (int a, String b) throws IOException {}''
+
+**R:** Întrebarea verifică cunoașterea regulilor pentru supracriere: 
+     * aceeși listă de argumente
+     * același tip de return sau un subtip al acestuia
+     * nu pot avea un modificator de acces mai restrictiv
+     * pot arunca doar aceleași excepții, excepții derivate din acestea, sau excepții unchecked.
+Doar varianta ''public void suprascrie (int integer, String string) {}'' respectă aceste reguli.
+
+
+**3.** Ce se afișează la execuția următorului cod:
+<code java>
+class MyClass{
+    private int id;    
+    
+    public MyClass(int id) { 
+        this.id = id;
+    }
+    
+    public int getId() { 
+        return id;
+    }   
+	
+    @Override
+    public boolean equals(MyClass obj) { 
+         return obj.id == id;
+    }
+
+    public static void main(String []args){
+        MyClass class1 = new MyClass(3);
+        MyClass class2 = new MyClass(new Integer(3));        
+        
+        if (class1.equals(class2))
+            System.out.println("Obiectele sunt egale");
+        else 
+	    System.out.println("Obiectele difera");
+     }
+}
+</code>
+- Se generează eroare de compilare la linia ''MyClass class2 = new MyClass(new Integer(3));''\\
+- Se afișează "Obiectele sunt egale"\\
+- Se afișează "Obiectele diferă"\\
++ Se generează o altă eroare de compilare față de cea menționată la celalalta varianta de răspuns  
+
+**R:**  Se generează eroare la @Override pentru că signatura funcției //equals// din //Object// primește parametru //Object//, ca atare //equals//-ul definit nu este o suprascriere, ci o supraîncărcare.
+
+**4.** Care dintre următoarele afirmații nu definește încapsularea?\\
+- gruparea atributelor și operațiilor caracteristice unui obiect\\
+- modificarea stării interne a unui obiect strict prin intermediul operatiilor acestuia\\
++ posibilitatea implementării interfețelor\\
+- ascunderea modului de funcționare a unui obiect 
+
+**R:** Scopul întrebării este verificarea cunoașterii conceptului de încapsulare. 
+Posibilitatea implementării interfețelor nu are legătură cu conceptul OOP de încapsulare. Restul afirmațiilor definesc caracteristici/avantaje ale încapsulării.
+
+== Moștenire și agregare ==
+
+**5.** Ce se afișează la execuția următorului cod:
+<code java>
+class A {
+	private int x = 5;
+	
+	private void hidden() { 
+		System.out.println(x);
+	}
+	
+	public void show_hidden() {	
+		hidden();
+	}
+}
+class B extends A {
+	public int x = 10;
+
+	public void hidden() { 
+		System.out.println(x);
+	}
+}
+public class Main {
+	public static void main(String[] args) {
+		B b = new B();
+		b.show_hidden();
+	}
+}
+</code>
+- eroare la compilare\\
++ 5\\
+- 10\\
+- 0\\
+
+**R:** La execuție se afișează 5 pentru că variabila //x// din clasa A este //private//, altfel ar fi fost 10.
+
+
+**6.** Fie următorul program:
+<code java>
+class C {}
+
+class D extends C {}
+
+class A {
+	static void foo (C c) { … }
+	static void foo (D d) { … }
+}
+
+class B extends A {
+	static void foo (C c) { … }
+	static void foo (D d) { … }
+}
+
+…(in main)
+A a = new B();
+C c = new D();
+</code>
+Care metodă va fi apelată dacă se rulează ''a.foo(c)''?\\
++ foo (C ) din A\\
+- foo (C ) din B\\
+- foo (D ) din A\\
+- foo (D ) din B
+
+**R: ** Exercițiu similar celui din laboratorul de [[laboratoare:recapitulare|recapitulare]], însă pentru metode statice. Scopul acestui exercițiu este verificarea cunoașterii conceptului că //metodele statice nu pot fi suprascrise//.
+
+**7.** Ce se afișează la execuția următorului cod:
+<code java>
+public class Main {
+    public static void main(String []args) {
+        B obj = new B();        
+        System.out.println(obj.getValue()); 
+	}
+}
+class A {
+    public int x;  
+	
+    public A() { 
+        x = 10;
+    }    
+    
+    public int getValue() { 
+        return x;
+    }
+}
+class B extends A {
+    public int x;
+    
+    public B() { 
+        x = 20;
+    }
+}
+</code>
++ 10\\
+- 20\\
+- Se generează eroare la compilare\\
+- Niciuna din variantele de mai sus
+
+**R:** Din moment ce metoda ''getValue'' nu este suprascrisă în B, atunci se apelează cea din A, pentru care este vizibil x-ul din A, care are valoarea 10. 
+
+==  Clase abstracte și interfețe== 
+
+**8.**  Care afirmație este adevărată în contextul limbajului Java?\\
+- O clasă poate implementa oricâte interfețe și poate moșteni oricâte clase (abstracte sau concrete)\\
+- O clasă poate implementa o singură interfață și poate moșteni oricâte clase (abstracte sau concrete)\\
++ O clasă poate implementa oricâte interfețe și poate moșteni o singură clasă (abstractă sau concretă)\\ 
+- O clasă poate implementa oricâte interfețe și poate moșteni oricâte clase abstracte și o singură clasă concretă 
+
+**R:** Întrebarea verifică regula de bază legată de moștenire în Java: poate fi moștenită o singură clasă dar implementate oricâte interfețe.
+
+**9.**  Care variantă definește cel mai bine legătura între interfețe și clase?\\
+- atât clasele, cât și interfețele definesc modul în care un obiect execută o operație\\
++ interfețele precizează operațiile expuse de un obiect, în timp ce clasele modul în care acesta le execută \\
+- nici clasele, nici interfețele nu precizează modul în care un obiect execută o operație \\
+- o clasă nu definește implicit interfața instanțelor sale \\
+ 
+**R:** Întrebarea verifică cunoștiințele legate de scopul și utilizarea interfețelor și cu ce diferă față de cel al claselor. Raspunsul corect este că interfețele expun operațiile unui obiect (un contract a ceea ce face/oferă un obiect) iar clasele modul în care le execută.
+
+== Clase interne ==
+
+**10.** Ce va afișa următorul program:
+<code java>
+class Outer {
+
+	static class Inner {
+		public static void main(String[] args){
+			System.out.print("1");	
+		}
+	}	
+	
+	public static void main(String[] args) {
+		Outer.Inner.main(null);
+		System.out.print("2");
+	}
+}
+</code>
++ 12\\
+- eroare compilare, nu putem apela explicit ''main'' din ''Inner''\\
+- 2\\
+- eroare compilare, nu putem avea metoda ''main'' intr-o clasa internă
+
+**R:** Declarația și apelul metodei //main// este corect. Clasele interne nu pot fi executate direct, însă nimic nu restricționează apelul acelei metode, din alta parte în program. Se apelează main și se afișează "1", apoi se afișează "2".
+
+**11.**  Alegeți codul corect pentru instanțierea unei clase interne anonime de tipul ''Food'' (clasă abstractă ce conține metoda ''public abstract String eat();'') 
+- Food f = new Food()\\
+- System.out.println(new Food(public String eat(){return "eat pizza";}));\\
+- System.out.println(new Food{String eat(){return "eat pizza";}});\\
++ System.out.println(new Food(){public String eat(){return "";}});
+
+**R:** Scopul acestui exercițiu este verificarea cunoaștiințelor legate de clasele interne anonime, mai precis felul în care acestea sunt create, și ca pot fi create în mod convenabil și acolo unde se dau parametru pentru o altă metodă.
+
+**12.** Care afirmație despre clasele interne statice este adevărată?\\
+- trebuie să avem o referință la instanța clasei exterioare pentru a o putea instanția\\
++ din clasa internă statică nu avem acces la membrii non-statici ai clasei exterioare\\
+- variabilele și metodele ei trebuie să fie statice\\
+- o clasă internă statică nu poate avea specificatorul de acces ''private''
+
+**R:** Scopul acestui exercițiu este verificarea cunoștiințelor legate de clasele interne statice, mai precis conceptul de bază, că nu avem nevoie de referință către instanța clasei exterioare. Deci nu avem acces la membrii non statici ai acesteia, pentru ca nu avem o instanță în care să "existe" aceștia.
+
+== Excepții == 
+**13.** Ce puteți spune despre următoarea funcție?
+<code java>
+public String f() {
+    String s=”1”;
+    try { 
+        throw new Exception();
+    } catch (Exception e) {
+        try {
+            try { 
+                    throw new Exception();
+                } catch (Exception e1) { 
+                    s += "2";
+                }
+		throw new Exception();
+             } catch (Exception e2) { 
+                s += "3"; 
+                return s; 
+             }      
+             finally { 
+                s += "5"; 
+             }
+        } 
+    finally { 
+        s += "6"; 
+    }
+}
+</code>
+- generează 1 eroare de compilare\\
+- generează 2 erori de compilare\\
++ la execuție întoarce 123\\
+- la execuție întoarce 12356\\
+
+**R:** Răspunsul corect este șirul "123" deoarece, deși se execută instrucțiunile din// finally//, pe stivă s-a pus deja ca rezultat returnat versiunea "123" a șirului. Obiectele //String// sunt immutable, deci modificările aduse în //finally// au rezultat într-un alt obiect string, nemodificându-se șirul pus să fie returnat. Dacă era un //return// în ultimul //finally// atunci s-ar fi întors 12356. Conform [[http://docs.oracle.com/javase/specs/jls/se5.0/html/statements.html#14.17 | specificației]] Java, blocul //finally// se execută înainte de transferul controlului (//return//-ul efectiv), dar expresia returnată (în cazul nostru șirul) va fi cea de dinainte de întrepunerea finally-ului.
+
+
+**14.** Ce va afișa următoarea secvență de cod? 
+<code java>
+public int f(int n) {
+    int s = 0;
+    for (int i =0; i < n; i++) { 
+        s += f(1);
+    }
+    return s;
+}
+...
+try {  
+    System.out.println(f(2));
+} catch (Throwable t) {
+    System.out.println("am prins ceva!");
+}
+</code>
+- 2 
+- eroare de compilare, obiectele ''Throwable'' nu pot fi prinse 
+- va intra într-o buclă infinită 
++ am prins ceva!
+
+**R:** Secvența de cod conține un apel recursiv infinit, ce generează o excepție StackOferflow, prinsă în blocul catch. La laboratorul de excepții a fost un exercițiu care să genereze aruncarea unei astfel de excepții.
+
+**15.** Ce va afișa următoarea secvență de cod?
+<code java>
+public class Main {
+    public static int f(int a, int b) {
+        try {	
+            System.out.println(a/b);
+        } catch (Exception ex) { 
+            return 1; 
+        }
+        finally { 
+            return 2; 
+        }
+    } 
+    
+    public static void main(String []args) {
+        int result = f(10, 0);        
+        System.out.println(result);
+    }
+}
+</code>
+- 1\\
++ 2\\
+- eroare la compilare\\
+- eroare la rulare, excepția generată nu poate fi prinsă
+
+
+**R:** Scopul exercițiului este verificarea înțelegerii flow-ului try-catch-finally. Secvența de cod generează o excepție la împărțirea cu 0, și atunci se intră în //catch// și apoi în //finally//, return-ul luat în considerare fiind cel din finally. 
+
+== Colecții și genericitate ==
+
+**16.**  Pe câte linii există erori în următoarea secvență de cod? 
+<code java>
+List<Integer> l1 = new LinkedList<Integer>();
+List<Number> l2 = new LinkedList<Integer>();
+List<Integer> l3 = new LinkedList<int>();
+List<Number> l4 = new List<Integer>();
+</code>
+- 1\\
+- 2\\
++ 3\\
+- 4
+
+**R:** Scopul exercițiului este verificarea regulilor legate de genericitate în contextul polimorfismului. Regula de bază,  accentuată și în [[http://elf.cs.pub.ro/poo/laboratoare/genericitate#genericitatea-in-subtipuri | laborator]] este că atribuirile polimorfice se aplică doar tipului de bază nu și tipului generic. Din acest motiv, //l2// și //l4// sunt greșite. Atribuirea //l3// este greșită deoarece tipurile primitive int/double/float/short/byte/boolean nu pot fi folosite ca tipuri generice.
+
+**17.** Ce colecție ar fi cel mai bine de folosit dacă am vrea să menținem o serie de configurări/proprietăți ale aplicatiei, citite dintr-un fișier de configurare. Alegeți în funcție de cat de ușor e de lucrat cu colecția respectivă în cazul de față, al lizibiltății codului și eficiența d.p.d.v. al timpului de acces.\\
+- ArrayList\\
+- HashSet\\
++ HashMap\\
+- LinkedHashSet
+
+**R:** Mai precizăm exemplul dat în timpul testului: fișierul de configurare poate conține date de genul: "os = linux" sau "graphics = low" etc. Scopul întrebării este verificarea înțelegerii avantajelor folosirii HashMap-ului și identificarea situațiilor în care e mai bine să îl folosiți (bad coding/design ar fi aici folosirea a doi vectori umpluți și parcurși în paralel, greșeală întâlnită în unele cazuri la laborator).
+
+**18.**  Care dintre afirmațiile următoare sunt adevărate in contextul limbajului Java?\\
+1. Dacă ''a.equals(b) == false'', atunci ''a.hashcode()==b.hashcode()'' este false.\\
+2. Metoda equals trebuie implementată pentru a determina dacă două obiecte sunt egale.\\
+3. Chiar dacă propriile obiecte nu suprascriu ''equals'', ele pot fi folosite drept chei în obiecte de tip ''Map'', fără a avea vreun caz de funcționare incorectă.\\
+4. ''HashSet'' nu permite duplicate și nu menține ordinea elementelor.
+- 1, 2, 3
+- 1, 4
+- 2, 3, 4
++ 2, 4
+
+**R:** Scopul principal al acestui exercițiu este verificarea înțelegerii folosirii/implementării equals și hashcode. Afirmația 1 e falsă pentru că e fix negarea  contractului Java pentru //equals// și //hashcode//. Afirmația a 3-a este falsă pentru că există situații în care dacă nu văfaceți propria implementare a metodei //equals// în clasa voastră folosită drept cheie în //Map//, atunci comportamentul programului poate sa nu fie cel dorit: se adauga obiecte drept chei in map care din punctul vostru de vedere sunt egale, insa neavand nici equals si nici hashcode cu implementari proprii, ele sunt considerate diferite. Aceasta afirmație verifică înțelegerea necesității de a suprascrie //equals// și //hashcode// pentru obiecte proprii, atunci când sunt adăugate în seturi sau folosite drept chei în map-uri.
+
+== Design Patterns == 
+19. Care pattern implică ascunderea vizibilității contructorilor unei clase?\\
++ Singleton\\
+- Visitor\\
+- Observer\\
+- Command
+
+**R:** Ascunderea vizibilității constructorilor este modlitatea prin care ne asigurăm ca acea clasă nu poate fi instanțiată din altă parte a programului, deci ne ajută în a implementa conceptul de Singleton.
+
+
+**20.**   Pe care dintre următoarele pattern-uri l-am folosi, dacă în aplicație avem foarte multe notificări între componente?\\
+- Visitor\\
+- Command\\
++ Observer \\
+- Factory
+
+**R:** Pattern-ul Observer este folosit pentru transmiterea de notificări de la componentele monitorizate către componentele care le monitorizează.

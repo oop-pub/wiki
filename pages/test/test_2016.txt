@@ -1,0 +1,380 @@
+= Test grilă, ianuarie 2016 =
+
+
+Au fost 20 de întrebări, 4 variante de răspuns, un singur răspuns corect. 4 numere, aceleași 20 de întrebări în ordine diferită.
+
+Metoda de evaluare: grilă franceză, -1/4 din punctajul unei întrebări la răspuns greșit, 0 dacă nu este marcat niciun răspuns.
+
+Analizăm aici întrebările pe rând, structurat pe secțiuni.
+
+== Basics ==
+
+**1.** Ce se va afișa la rularea urmatorului cod?
+<code Java>
+public static void main(String[] args) {         
+          String s = 0+1+"ONE"
+                    +3+2+"TWO"+"THREE"
+                    +5+4+"FOUR"+"FIVE"+5;
+          System.out.println(s);         
+}
+</code>
+
+  * 01ONE32TWOTHREE54FOURFIVE5
+  * **1ONE32TWOTHREE54FOURFIVE5**
+  * 1ONE5TWOTHREE9FOURFIVE5
+  * 01ONE5TWOTHREE9FOURFIVE5
+
+**R:** Neavând paranteze sau alți operatori în afară de adunare, expresia se evaluează de la stânga la dreapta în ordinea dată. Întâi avem adunare de numere întregi (0+1), ceea ce dă tot un număr întreg (1). După aceea avem adunare între un număr întreg și un String, iar în Java nu trebuie conversie explicită pentru a face această operație, rezultatul fiind String-ul "1ONE". După aceea toată expresia devine concatenare de String-uri, realizându-se __conversia implicită__ a numerelor întregi la șiruri de caractere. Dacă adunările 3+2 sau 5+4 erau în paranteze, atunci se evalua întâi ceea ce era în paranteze, rezultând 5, respectiv 9, și se concatena la șirul de caractere. 
+
+[[laboratoare:java-basics#functii-membru|Laboratorul 1]] conține explicații și un exemplu (VeterinaryTest) referitoare la această conversia implicită. Detalii suplimentare pe acest subiect: [[https://docs.oracle.com/javase/tutorial/java/data/converting.html| Java Tutorial - Converting Between Numbers and Strings]]. 
+
+
+**2.**  Ce metode sunt vizibile din clasa B?
+<code Java>
+package A;
+class A {
+    private void show1() {}
+    protected void show2() {} 
+    void show3() {}
+}
+
+(alt fisier)
+package B;
+class B extends A {
+    public void show2() {}
+} 
+</code>
+* show1, show2 din B, show3
+* show2 din B, show2 din A, show3
+* codul nu compilează datorită suprascrierii greșite
+* ** show2 din B, show2 din A**
+
+Download here the {{:test:test_subiect2.zip|testing code}}
+
+**R:** Întrebarea verifică înțelegerea tipurilor de acces. Răspunsul corect este //show2// din //B// și //show2// din //A// pentru că //show1// este privată iar //show3// este default, deci nu poate fi vizibilă din alt pachet. Deoarece din bucata dată de cod lipsea import-ul clasei A, și putea induce în eroare (codul nu ar fi compilat și nici una din variante nu ar fi fost corecte) am decis să anulăm și această întrebare.
+
+
+
+== Constructori și referințe ==
+
+**3.** Fie următoarele clase:
+
+<code Java A.java>
+public class A {
+        int x;
+        int y;
+
+        A() {
+                x = 1;
+                y = 1;
+        }
+        
+        A(int x) {
+                this.x = x;
+                this.y+=1;
+        }
+}
+
+class B extends A {
+        B(int x) {
+                this.y += this.x + x;
+        }
+}
+</code>
+Ce se afişează dacă rulăm:
+<code java>
+System.out.print(new A(1).y);
+System.out.print(new B(1).y);
+</code>
+* 20
+* 23
+* 24
+* 35
+
+* **13**
+
+Deoarece întrebarea a fost formulată greșit (variantele de răspuns erau pentru altă versiune a codului), am decis să o anulăm, astfel toata lumea primind punctajul pentru acest subiect.
+
+**R:** În cazul primului număr de afişat, se apelează constructorul cu parametru din clasa A, valoarea câmpului y devenind 1, deoarece, la crearea clasei, ea este 0 iar apoi este incrementată cu 1. Cea de-a doua valoare este egală cu 3 deoarece constructorul lui B apelează implicit constructorul fără parametrii din părintele său, A. Astfel, câmpul y din al doilea obiect este iniţializat cu 1 în constructorul fără parametrii din A, apoi incrementat cu valoarea câmpului x (iniţializat tot cu 1) şi cu parametrul x.
+
+
+**4.** Ce valoare va returna b.show() ?
+<code Java>
+public class B {
+    B b = new B();
+
+    public int show () {
+        return (true ? null : 0);
+    }
+
+    public static void main(String[] args)  {
+        B b = new B();
+        b.show();
+    }
+}
+</code>
+  * java.lang.NullPointerException
+  * **java.lang.StackOverflowError**
+  * 0
+  * null
+
+
+**R:** Execuția acestui cod va genera StackOverflowException datorită instanțierii recursive a clasei B (linia 1 din clasa B). Practic se va apela recursiv constructorul clasei B și nu se va ieși niciodată din vreun constructor, astfel umplându-se stiva de apeluri.
+
+**5.** Care dintre următoarele clase sunt imutabile?
+* public class Test { private final int x = 3 };
+* Object, String
+* ** Integer, String**
+* public final class Test { public int y; Test(int y) { this.y = y;} }
+
+
+**R:** Obiectele imutabile (//imutable//) sunt obiecte care după creare nu mai pot fi modificate. Clasa [[https://docs.oracle.com/javase/7/docs/api/java/lang/String.html|String]] este imutable, conținutul ei nu poate fi modificat și nici nu poate avea subclase mutabile, fiind declarată final. Asta înseamnă că dacă dorim să modificăm un String (e.g. printr-o metodă de replace a unui caracter) obținem de fapt alt obiect String. La fel ca și String, clasa [[https://docs.oracle.com/javase/7/docs/api/java/lang/Integer.html|Integer]], este imutabilă și nici nu poate fi extinsă, la fel ca și restul wrapperelor pentru primitive.
+
+Legat de restul variantelor de răspuns:
+  * clasa ''Test'' pare imutabilă, deoarece câmpul ''x'' nu poate fi modificat, însă poate fi extinsă, ceea ce înseamnă că obiectele de tip Test pot să fie și mutabilă, totul depinzând de cum implementăm subclasele. Pentru mai multe detalii și un exemplu, urmăriți răspunsurile de pe [[http://stackoverflow.com/questions/12306651/why-would-one-declare-an-immutable-class-final-in-java| acest thread]].
+  * clasa [[https://docs.oracle.com/javase/7/docs/api/java/lang/Object.html|Object]] nu este imutable, altfel toate obiectele ar fi imutable (toate clasele moștenesc Object)
+  * clasa ''Test'' este declarată final, adică nu poate fi extinsă, dar asta nu înseamnă că nu poate fi //mutable//. Având variabila publică y, această clasă poate fi schimbată, deci este //mutable//. 
+
+== Clase abstracte și interfețe ==
+
+**6.** Care afirmație este corectă?      
+* **o clasă poate implementa mai multe interfețe, însă poate extinde o singură clasă abstractă**
+* o clasă abstractă are cel puțin o metodă abstractă
+* membrii unei clase abstracte sunt considerați \texttt{static final}
+* în interfețe și clase abstracte nu pot fi definite metode statice
+
+**R:** Această întrebare verifică noțiuni de bază legate de clase abstracte și interfețe. Prima variantă este corectă, e o restricție de bază a limbajului, o clasă putând extinde o singură clasă (fie ea abstractă sau nu) și poate implementa mai multe interfețe. Această restricție e bine de avut în vedere atunci când vă decideți dacă să faceți o clasă abstractă doar cu metode abstracte sau o interfață. Dacă clasa care o extinde are nevoie sa extindă și altă clasă atunci mai bine creați o interfață.
+
+Legat de restul variantelor de răspuns:
+* o clasă abstractă nu este obligată să conțină metode abstracte
+* membrii unei clase abstracte poti fi declarați ca membrii oricărei clase, nu este obligatoriu să fie static final. La interfețe este obligatoriu să fie public static final.
+* puteți defini metode statice atât în clasele abstracte (dintotdeauna) cât și în interfețe (din java 8). Chiar dacă nu erați siguri dacă pot fi declarate în interfețe, fiindcă aveam "și", afirmația era invalidată de partea cu clasele abstracte. 
+
+
+
+**7.** Care afirmaţii sunt corecte? (Ci denotă clase, Ii denotă interfeţe) 
+A) C1 extends I1; 
+B) I1 extends I2, I3; 
+C) I1 implements I2; 
+D) C1 implements I1,I2;
+E) C1 extends C2, C3.
+* A, B, C, E
+* B, D, E
+* **B, D**
+* C, E
+
+**R:** Acestă întrebare verifică noțiuni de bază legate de conceptul de moștenire și implementare interfețe.// O clasă poate extinde o singură clasă. O clasă poate implementa oricâte interfețe. O interfață poate extinde oricâte alte interfețe.// Doar B și D sunt afirmații corecte, celelalte fie folosesc keyword-ul greșit (extends în loc de implements și invers - A, respectiv C), fie prezintă moștenire multiplă (E).
+
+== OOP ==
+
+**8.** Care variantă reprezintă supraîncărcarea corectă a metodei: ''String getMessage()''
+* public String getMessage()
+* StringBuffer getMessage()
+* ** public String getMessage(String from)**
+* public String getMessage() throws Exception
+
+**R:** Această întrebare verifică cunoștiințe de bază ale conceptului de supraîncărcare (overloading). Regulile pentru o supraîncârcare corectă sunt prezentate și în [[laboratoare:visitor#tldr|laboratorul 6]]: __metoda supraîncărcată are neapărat o listă diferită de argumente__. Varianta a treia este singura care respectă această regulă. Schimbarea modificatorului de acces, a tipului de return sau a excepțiilor aruncate, fără a schimba numărul sau tipul parametrilor, nu reprezintă o supraîncărcare corectă, și nici nu este permisă la compilare.
+
+
+**9.** Care dintre urmatoarele variante **nu** defineste încapsularea?
+* expunerea unei interfețe high-level de lucru cu obiectul
+* accesul la membri private folosind metode de tip getter și setter
+* **posibilitatea suprascrierii (overriding) metodelor**
+* construirea de obiecte complexe și ascunderea modului lor de funcționare
+
+**R:** Variantele 1,2 și 4 reprezintă toate definiții/proprietăți ale încapsulării. Suprascrierea metodelor nu are nici o legătură cu conceptul de [[https://en.wikipedia.org/wiki/Encapsulation_%28computer_programming%29|încapsulare]], al cărui scop este ascunderea comportamentului intern al obiectului și oferirea unei interfețe de lucru cu acesta, controlând astfel accesul la variabilele sale interne, nepermițând modificarea lor din alte clase. De exemplu este bine să aveți variabilele private, sau cel mult protected și să oferiți getter și setteri pentru accesarea lor. Acest lucru constituie un avantaj mai ales când aveți nevoie să faceți ceva suplimentar cu ele în getteri și setteri, de exemplu o validare.
+
+
+**10.** Care combinație reprezintă, într-o clasă pe nume ''Test'', o suprascriere, respectiv o supraîncărcare validă (overriding și overloading) pentru metoda ''equals'' din java.lang.Object?
+* public Boolean equals (Object o) \ protected Integer equals (Object b)
+* boolean equals(Object o) \ public boolean equals(Test t)
+* public Boolean equals (Object t) \ public int equals (Object b)
+* **public boolean equals(Object t) \ public int equals(Test t)**
+
+**R:** Toate variantele, în afară de ultima nu respectă cel puțin un criteriu obligatoriu pentru o suprascriere sau supraîncărcare validă, prezentate și în [[laboratoare:visitor#tldr|laboratorul 6]]. 
+
+Metoda [[https://docs.oracle.com/javase/7/docs/api/java/lang/Object.html#equals%28java.lang.Object%29|equals]] din clasa Object este publică, întoarce un boolean și primește ca parametru un Object. Fiindcă modificatorul de acces este //public// și altul mai puțin restrictiv nu există, în clasa Test nu puteți suprascrie decât dacă metoda este tot //public//. Tipul de return și semnătura trebuie păstrate identice. Tipul de return poate diferi doar când este înlocuit cu un subtip, ceea ce nu este cazul în acest exercițiu. O greșeală comună este de a pune în loc de Object, tipul clasei respective, in acest caz Test. Aceasta ar fi o supraîncarcare și nu o suprascriere. Tot o supraîncărcare este și dacă, pe lângă tipul parametrului schimbăm și tipul de return, ca în varianta de mai sus.
+
+
+**11.** Ce se afișează la execuția codului următor (dacă se execută):
+<code Java Package.java>
+public class Package {
+    public String checksum() { return "Package"; }
+
+    public static void main(String []args) {
+        Comm c = new Comm();
+        System.out.println(c.send((Package)new UDP()) + "; "
+                        + c.send(new TCP()) + "; "
+                        + c.send(new UDP()));
+    }
+}
+
+class UDP extends Package {
+    public String checksum() { return "UDP"; }
+}
+
+class TCP extends Package {
+    public String checksum() { return "TCP"; }
+}
+
+class Comm {
+    String send(Package p) { return "PKG:" + p.checksum(); }
+    String send(UDP p) { return "UDP:" + p.checksum(); }
+    String send(TCP p) { return "TCP:" + p.checksum(); }
+} 
+</code>
+* codul are o eroare de compilare
+* UDP:UDP; TCP:TCP; UDP:UDP
+* **PKG:UDP; TCP:TCP; UDP:UDP**
+* PKG:UDP; PKG:TCP; PKG:UDP
+
+**R:** La compilare, vor fi considerate 3 obiecte, unul de tip ''Package'', unul de tip ''UDP'' și unul de tip ''TCP'' și se va considera apelul metodelor send pt Package, UDP și TCP. La runtime, obiectele p din metodele send vor fi de tip ''UDP'', ''TCP'' și ''UDP''. Practic, la runtime care metodă suprascrisă (overriden) să fie apelată, în timp ce la compilare se decid metodele supraîncărcate (overloaded).
+== Clase interne == 
+**12.** Care din următoarele afirmații este adevarată despre clasele interne statice în Java:
+* Este nevoie de o referință la un obiect din clasa externă pentru a putea instanția un obiect al clasei interne
+* **Nu are acces la membrii non-statici ai clasei externe**
+* Atributele și metodele conținute de aceasta trebuie să fie statice
+* Trebuie neapărat să moștenească clasa externă
+
+**R:** Scopul acestei întrebări este verificarea înțelegerii conceptelor de bază despre clasele interne statice și de a nu face confuzia între ele și cele nestatice. După cum ați aflat și în [[laboratoare:clase-interne#clase-interne-statice| laboratorul despre clase interne]], clasele interne statice pot fi instanțiate fără a avea nevoie de o referință a clasei externe. Acest lucru este similar cu accesul și alți membrii statici (variabile, metode) fară a avea nevoie de o instanță a clasei. Din cauză că nu avem o instanță a clasei externe, nu putem accesa membrii săi non-statici.
+
+Legat de celelalte variante de răspuns:
+    * prima afirmație se referă la clasele interne ne-statice
+    * a treia afirmație prezintă o restricție care nu este impusă de aceste clase
+    * a patra afirmație, ca și a treia, este greșită și absurdă în contextul claselor interne
+
+
+**13.** Cum afișăm ''y'' din ''Inner''?
+<code Java>
+class Outer {
+     int y;
+     private class Inner {
+         int y;
+     }
+}
+
+class Outer1 extends Outer {
+     public void show() { //todo afisare y}
+}
+</code>
+* System.out.println(this.new Inner().y);
+* System.out.println(super().new Inner().y);
+* System.out.println(Outer.this.Inner().y);
+* **nici una**
+
+**R:** Să luăm pe rând variantele de răspuns și să vedem ce putem elimina:
+
+* ''System.out.println(this.new Inner().y);'' - incorect, nici nu compilează pentru că Inner este membru privat al clasei Outer, deci nu poate fi instanțiată decât din interiorul lui Outer.
+* ''System.out.println(super().new Inner().y);'' - incorect deoarece apelul super() poate fi făcut doar din constructorul lui Outer1. Dacă totuși nu ați fi observat că este call-ul pt constructor și l-ați fi confundat cu super.ceva_al_clasei_parinte, tot ar fi trebuit să ridice red flags accesarea clasei private Inner.
+* ''System.out.println(Outer.this.Inner().y);'' - dacă am fi fost într-o clasă internă lui Outer, atunci cu Outer.this am fi obținut referința clasei externe Outer. Doar că apelul acesta este în Outer1, care moștenește Outer, nu este internă ei, deci nu are sens, și nici nu compilează.
+
+Rămâne astfel doar ultima variantă, "nici una". Dacă vreți să îl afișați pe y este suficient să scrieți: ''System.out.println(y);'' sau ''System.out.println(this.y);''
+
+
+== Colecții și genericitate ==
+**14.** Care declarație este corectă?
+* List<Integer> list = new List<Integer>();
+* ArrayList<Integer> list = new List<Integer>();
+* ArrayList<Object> list = new ArrayList<Integer>();
+* **List<Integer> list = new ArrayList<Integer>();**
+
+**R:** Scopul întrebării era să verificăm că știți să instanțiați corect o clasă parametrizată, în particular că generics nu sunt covariante și că nu puteți instanția o interfață. Primele două variante de răspuns sunt greșite pentru că se instanțează interfața List. A treia variantă este greșită datorită restricțiilor de genericitate. See also [[laboratoare:genericitate#genericitatea-in-subtipuri|discuția]] despre genericitate și subtipuri din laboratorul despre genericitate și acest [[https://www.ibm.com/developerworks/java/library/j-jtp01255/index.html|articol]]. 
+
+
+
+**15.** Ce colecție ar fi cel mai bine de folosit dacă am vrea să menținem o serie de configurări/proprietăți ale aplicatiei, citite dintr-un fișier de configurare. Alegeți în funcție de cat de ușor e de lucrat cu colecția respectivă în cazul de față, al lizibiltății codului și eficiența d.p.d.v. al timpului de acces.
+* ArrayList
+* HashSet
+* **HashMap**
+* LinkedHashSet
+
+**R:** De exemplu fișierul de configurare poate conține date de genul: "os = linux" sau "graphics = low" etc. Scopul întrebării este verificarea înțelegerii avantajelor folosirii HashMap-ului și identificarea situațiilor în care e mai bine să îl folosiți (bad coding/design ar fi aici folosirea a doi vectori umpluți și parcurși în paralel, greșeală întâlnită în unele cazuri la laborator).
+
+(subiectul acesta a fost dat și în [[test:test_2014#colectii-si-genericitate|testul din 2014]])
+
+**16.** Care afirmație este falsă?
+* interfața ''Comparable<T>'' conține o metodă ''int compareTo(T o)'';
+* interfața ''Comparator<T>'' conține o metodă ''int compare(T o1, T o2)'';
+* **interfața ''Comparator<T>'' conține o metodă ''int compareTo(T o)'';**
+* interfața ''Comparator<T>'' conține o metodă ''boolean equals(Object obj)'' ce face override metodei din Object;
+
+**R:** The hint is in their names: interfața [[https://docs.oracle.com/javase/7/docs/api/java/lang/Comparable.html|Comparable]] face ca obiectele de tip T care o implementează să devină //comparabile// între ele, în timp ce interfața [[https://docs.oracle.com/javase/7/docs/api/java/util/Comparator.html|Comparator]] permite clasei care o implementează //să compare două obiecte// de un anumit tip T. Subiectul acesta nu verifică că știți exact numele metodelor din aceste interfețe, ci că știți diferența dintre ele. Primele două afirmații sunt adevărate pentru că metoda de comparare are un singur parametru pentru Comparable și doi pentru Comparator. A treia varianta este cea falsă pentru că avem un singur parametru în metoda Comparator-ului. 
+== Excepții ==
+**17.**  Ce se va întâmpla la rularea următorului program?
+<code java Test.java>
+public class Test {
+    public static int f(int i){
+        try{
+            System.out.print(i);
+            return 1;
+        } finally{
+            try {
+                return 10 / 0;
+            } catch (Throwable e){
+                return 100;
+            } finally {
+                System.out.print(7);
+            }        
+        }
+    }
+
+    public static void main(String[] args){
+        System.out.print(f(9));
+    }
+}
+</code>
+* 9100
+* **97100**
+* 91007
+* 977100
+
+**R:** Blocul finally se execută întotdeauna, chiar și dacă avem return (în afară de atunci când avem [[https://docs.oracle.com/javase/7/docs/api/java/lang/System.html#exit%28int%29|System.exit]] și se oprește masina virtuală). Din această cauză flow-ul codului de mai sus este: syso(9) -> se intră în finally -> return 10/0 generează eroare din cauza împărțirii la zero -> eroare este de tip Throwable și este prinsă în catch -> se excută finally-ul acestui bloc try-catch, syso(7) -> se termină blocul al doilea  finally -> se termină primul bloc finally -> se întoarce 100 -> syso(100).
+
+**18.**  Care afirmație este corectă pentru codul următor?
+<code Java ErrorTest.java>
+import java.io.*;
+public class ErrorTest {
+    void foo() throws IOException {
+        throw new RuntimeException();
+    }
+
+    public static void main(String[] args) {
+        ErrorTest err = new ErrorTest();
+        try {
+            err.foo();
+        } catch (IOException e) {
+            System.out.println("Caught exception");
+        }
+    }
+}
+</code>
+* se va afişa //Caught exception//
+* **eroare la rulare: //RuntimeException//**
+* eroare la compilare: antetul metodei //foo// trebuie să includă şi //RuntimeException// în clauza //throws//
+* eroare la compilare: trebuie adăugat un bloc //catch// şi pentru// RuntimeException//
+
+**R:** În metoda //foo// se aruncă excepția //RuntimeException// și nu este prinsă în main, deci va apărea la rulare. Blocul //catch// prinde doar excepțiile de tip //IOException//. De asemenea, pentru că RuntimeException este excepție //unchecked//, programul compilează chiar dacă nu o includem în clauza //throws// a metodei //foo// sau dacă nu facem un //catch// pentru ea.
+
+== Design patterns ==
+
+General disclaimer pentru intrebarile de design patterns din testele de până acum și cele viitoare:  
+
+La design patterns, unde lucrurile nu sunt fixe (e.g. pot implementa un pattern și într-o situație în care nu e recomandat deoarece mai mult încurcă designul sau afectează performanța) e recomandat să alegeți varianta în care vine cel mai ușor și natural de implementat, sau care prezintă o situație pentru care acel pattern este de obicei recomandat, chiar dacă considerați că și celelalte variante sunt aplicabile într-o anumită măsură. Dacă vi se pare că un exercițiu are mai multe variante corecte, restrangeți la cea mai evidentă de aplicat.
+
+**19.** Ce design pattern ar fi util de folosit în cazul în care avem o colecție de date și dorim să facem o statistică relevantă în funcție de un anumit criteriu?
+* **Visitor**
+* Command
+* Factory
+* Strategy
+
+**R:** Deci ce avem în această situație? O colecție de date, pe care presupunem că este reprezentată printr-o colecție (lista, de exemplu) de anumite obiecte, și dorim să facem operații pe ea pentru a obține diverse statistici. Asta sună extrem de similar cu un scenariu de folosire pentru //Visitor//. //Factory// pattern este pattern structural, ce se ocupă cu crearea obiectelor, deci nu prea are legatură cu situația dată (bine, putem folosi //Factory// pentru a crea acele obiecte din colecție, dar nu este atât de relevant pentru întrebarea noastră). //Command// nu prea se potrivește direct, decât dacă încercăm să abordăm problema altfel, să decuplăm aplicarea unor comenzi de prelucrare, iar //Strategy// ar putea fi o opțiune potrivită dacă am vrea să alegem dinamic, la runtime, dintre mai multe feluri de a face acea statistică.
+
+**20.** Ce design pattern folosim dacă vrem să simulăm pasarea și procesarea de "pointeri la funcții" încapsulați în obiecte?
+* **Command**
+* Factory
+* Singleton
+* Observer
+
+**R:** //Factory// și //Singleton// pică din start pentru că sunt pattern-uri legate de crearea obiectelor, iar întrebarea nu dorește soluționarea acestui aspect. Componentele și relațiile sugerate de pattern-ul //Observer// nu se potrivesc cu această problemă, nu dorim să monitorizăm obiecte, nu dorim ceva event-triggered etc. Pattern-ul //Command// este cel mai potrivit pentru această situație, fiecare pointer fiind un obiect de tip comandă.
+
+

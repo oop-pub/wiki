@@ -1,0 +1,68 @@
+= Despre cod și IDE =
+
+== Code style ==
+
+Recomandăm coding style-ul [[https://google.github.io/styleguide/javaguide.html|Google]] sau [[http://www.oracle.com/technetwork/java/codeconvtoc-136057.html|Oracle]].
+
+Păstrați consistența coding style-ului pentru fiecare temă (de exemplu nu folosiți într-o temă două stiluri diferite de a pune parantezele).
+
+/*Oricare ar fi coding style-ul vostru, rămâneți la el de-a lungul proiectului/temei/laboratorului. 
+Disclaimer: stilul haotic nu se pune.*/
+== Recomandări ==
+
+* camelCase pentru numele metodelor și variabilelor. CamelCase pentru numele claselor.
+* Liniile de cod nu ar trebui să depășească 80 sau 100 de caractere. Atunci când depășesc, "spargerea" liniei de cod se face:
+   * //înainte// de operator
+   * //după// un operator de atribuire
+   * lăsați mai mult de patru spații pe linia următoare
+* Exemple pentru line breaks:
+
+<code Java>
+String s = "a"
+          + "b"
+          + "c";
+
+enum Color {
+    RED,
+    GREEN,
+    BLUE
+}
+
+if ((condition1 && condition2)
+        || (condition3 && condition4)
+        ||!(condition5 && condition6)) {
+    doSomethingAboutIt();
+}            
+</code>
+* Nu folosiți import-uri wildcard (e.g. import java.util.*). Acestea încarcă namespace-ul și s-ar putea să aveți conflicte de denumiri (e.g java.util si java.awt ofera o interfata List, daca amandouă ar fi importate cu wildcard, atunci ar aparea conflict la folosirea interfeței List). În plus, dacă sunt folosite importuri fără wildcard, dependențele devin explicite, fiind mai ușor de observat.
+* **Javadoc-ul** se face pentru clase și membrii lor publici și protected. Pentru metode simple și cu un rol evident, de genul getters si setters, puteți omite Javadoc-ul. Nu este recomandată documentarea metodelor private deoarece expun informații care fie nu sunt necesare celor care utilizează clasa respectivă, fie pot fi exploatate în mod malițios (e.g. breșe de securitate).
+* Nu este recomandată declararea mai multor variabile pe aceeași linie (e.g. int a, b[], c;)
+* Puneți adnotarea @override pentru metodele suprascrise ([[http://stackoverflow.com/questions/94361/when-do-you-use-javas-override-annotation-and-why|exemple de cazuri în care este utilă]]).
+== IDE: Eclipse ==
+
+Pe stațiile din laborator vom avea instalat Eclipse. Bineînțeles, sunteți liberi să folosiți orice tool de dezvoltare (Netbeans, IntelliJ, Notepad/Vim + make, etc), dar pentru ce avem nevoie, Eclipse este arhisuficient.
+
+Prezentăm aici câteva operații frecvente și utile pe care le puteți face rapid:
+
+  * **contextual autocomplete: Ctrl-Space**
+    * the single most used IDE hotkey
+    * autocompletează nume de variabile, metode, parametri, clase
+    * puteți suprascrie metode e.g. ''new Runnable() { /* ru(ctrl-space, enter aici) */ }''
+    * generați metodă main e.g. ''ma(ctrl-space, enter)''
+  * **auto-resolver: Ctrl-1**
+    * nu merge întotdeauna, dar e destul de deștept
+  * **toggle line comment: Ctrl-/**
+    * puteți face pe mai multe linii, nu trebuie să fie selectate complet
+    * linia curentă poate să nu fie selectată
+  * **line delete: Ctrl-D**
+    * la fel ca la Ctrl-/
+  * **optimize imports: Ctrl-Shift-O**
+    * auto import pentru exact ce aveți nevoie - folosiți-l la greu
+  * **auto-indent: Ctrl-I**
+  * **indentare: selectat linii, Tab (indent) / Shift-Tab (unindent)**
+  * **auto format: Ctrl-Shift-F**
+    * aveți grijă să vă configurați formatter-ul
+    * Window - Preferences - Java - Code Style - Formatter, apoi New... , plecați de la formatter-ul default (Eclipse/built-in) și modificați/adăugați regulile voastre (e.g. liniile la 80 chars)
+  * **mutat cod: selectați linii (sau pe linia curentă), apăsat Alt + săgeți sus/jos**
+  * **navigare către clasă: Ctrl-Shift-T**
+  * **navigare în clasă, la o metodă: Ctrl-O**

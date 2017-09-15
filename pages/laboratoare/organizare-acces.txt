@@ -1,0 +1,70 @@
+= Organizarea surselor și controlul accesului =
+
+Chiar şi în cadrul proiectelor de dimensiune medie, numărul claselor definite poate creşte considerabil. Astfel, devine aparentă necesitatea unei organizări a fişierelor sursă, pe baza funcţiei îndeplinite şi relaţiilor dintre acestea. În plus, această organizare permite şi utilizarea unor mecanisme de control al accesului. 
+
+Spre exemplu, în cadrul unei aplicaţii de transfer de fişiere, se pot distinge mai multe module, precum cel de interfaţă cu utilizatorul, cel de reţea, cel de configurare etc. În acest caz, este utilă gruparea claselor aferente fiecărui modul în propriul **pachet**. 
+
+Astfel, definiţia clasei //MainClass// din pachetul principal //myapp// ar începe prin cuvântul cheie ''package'':
+
+<code java>
+package myapp;
+
+import java.util.*;
+
+public class MainClass {
+    ...
+}
+</code>
+
+Organizarea în **pachete** adoptă o formă //ierarhică//, naturală, de altfel, în condiţiile în care proiectele ajung să aibă rapid module şi submodule pe măsură ce se dezvoltă. De asemenenea, această organizare se reflectă şi în structura de directoare a proiectelor. De exemplu, presupunand că directorul ce conţine sursele este //src//, fişierul //Main.java// se va găsi în directorul //src/myapp//.
+
+În continuare, pentru implementarea modulului de reţea în cadrul proiectului //myapp// de mai sus, se poate defini pachetul //network//, care va fi ierarhic inferior pachetului //myapp//. În astfel de situaţii numele de pachete se separă prin ".", ca în exemplul următor:
+
+<code java>
+package myapp.network;
+
+public class NetworkConnection {
+    ...
+}
+</code>
+
+Fişierul //NetworkConnection.java// se va găsi în directorul //src/myapp/network//.
+
+O documentaţie detaliată legată de oraganizarea în pachete poate fi accesată de [[http://docs.oracle.com/javase/tutorial/java/package/index.html|aici]].
+
+== Specificatori de acces ==
+
+Clasele şi funcţiile menţionate până acum au fost declarate utilizând un specificator special: ''public''. În limbajul Java (şi în majoritatea limbajelor de programare de tipul OOP), orice clasă, atribut sau metodă posedă un **specificator de acces**, al cărui rol este de a restricţiona accesul la entitatea respectivă, din perspectiva altor clase. Există specificatorii:
+
+* **''public''** - permite acces complet din exteriorul clasei curente
+* **''private''** - limitează accesul doar în cadrul clasei curente
+* **''protected''** - limitează accesul doar în cadrul clasei curente şi al tuturor descendenţilor ei (conceptul de //descendenţă// sau de //moştenire// va fi explicat mai târziu)
+* **(default)** - în cazul în care nu este utilizat explicit nici unul din specificatorii de acces de mai sus, accesul este permis doar în cadrul //pachetului// (package private). Atenţie, nu confundaţi specificatorul default (= lipsa unui specificator explicit) cu ''protected''!
+
+**Important**: utilizarea specificatorilor contribuie la realizarea //**încapsulării**//. Amintim, din primul laborator, că încapsularea se referă la acumularea atributelor şi metodelor caracteristice unei anumite categorii de obiecte într-o clasă. //Pe de altă parte, acest concept denotă şi ascunderea informaţiei de stare internă a unui obiect, reprezentată de atributele acestuia, alături de valorile aferente, şi asigurarea comunicării strict prin intermediul metodelor// (= //interfata// clasei). Acest lucru conduce la izolarea modului de implementare a unei clase (= atributele acesteia şi cum sunt manipulate) de utilizarea acesteia. Utilizatorii unei clase pot conta pe funcţionalitatea expusă de aceasta, **indiferent de implementarea ei internă** (chiar şi dacă se poate modifica în timp). Dacă utilizatorii ar avea acces la modul efectiv de implementare a unei clase, ar fi imposibilă modificarea implementării ei (necesitate care apare des în practică) fără un impact lateral asupra utilizatorului.
+
+
+== Exerciţii ==
+
+  - (5p) Implementaţi o clasă //MyArrayList//, care va reprezenta un vector de numere reale, cu posibilitatea redimensionării automate. Ea va fi definită în pachetul //arrays//. Clasa va conţine următoarele metode:
+    * un constructor fără parametri, care creează intern un vector cu 10 elemente
+    * un constructor cu un parametru de tipul întreg, care creează un vector de dimensiune egală cu parametrul primit
+    * o metodă numită ''add(float value)'', care adaugă valoarea ''value'' la finalul vectorului. Dacă se depăşeşte capacitatea vectorului, acesta se va redimensiona la o capacitate dublă
+      * //Atenţie!// Există o diferenţă între capacitatea vectorului (dimensiunea cu care a fost iniţializat) şi numărul de elemente memorate efectiv în el (care este cel mult capacitatea).
+    * o metodă numită ''contains(float value)'' care returnează ''true'' dacă ''value'' există în cadrul vectorului
+    * o metodă numită ''remove(int index)'' care elimină valoarea aflată în vector la poziţia specificată de ''index'' (numerotarea incepând de la 0); se va da un mesaj dacă indexul este invalid
+    * o metodă numită ''get(int index)'' care va returna elementul aflat în poziţia ''index''
+    * o metodă numită ''size()'' care returnează numarul de elemente din vector
+    * o metodă declarată ''public String toString()'' care va returna o reprezentare a tuturor valorilor vectorului ca un şir de caractere
+  - (1p) Scrieţi o clasă de //test// separată pentru clasa //MyArrayList//, populând lista cu 3 elemente şi verificând că valorile întoarse de metoda //get// corespund, într-adevăr, poziţiilor aferente din vectorul intern clasei. Ce condiţii trebuie îndeplinite pentru atingerea scopului propus?
+  - (2p) Scrieţi un scenariu de utilizare a clasei //MyArrayList//, astfel:
+    * iniţializând-o cu o capacitate de 5 de elemente iar apoi inserând 10 elemente aleatoare utilizând doar metoda //add//
+    * cautând 5 valori aleatoare în vector
+    * eliminând 5 valori aleatoare din vector
+  - (3p) De multe ori este bine ca programarea unor aplicaţii mari să se faca modular, un modul fiind gestionat de o anumită clasă. De asemenea, în cadrul acestor aplicaţii, puteţi avea situaţii în care o metodă are nevoie să utilizeze mai multe module, deci să primească referinţele mai multor clase, fapt ce poate deveni dificil de gestionat. De aceea, aceste clase se pot implementa limitând accesul la //o singură instanţă statică//, ceea ce permite accesarea acesteia doar pe baza //clasei//, fară a mai fi necesară trimiterea ei ca parametru in metode. Aşa descoperim un prim //design pattern// orientat-obiect; el se numeşte **Singleton** şi puteţi afla câteva despre el [[http://example.com|aici]]. Ne propunem să implementăm o variantă simplă. Creaţi clasa //Singleton//, care să 
+    * aibă intern o singură instanţă //statică//
+    * aibă un constructor //privat// (de ce e nevoie?)
+    * expună o metodă //publică// de acces la instanţă (un getter)
+ 
+
+ 

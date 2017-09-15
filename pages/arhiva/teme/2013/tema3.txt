@@ -1,0 +1,109 @@
+
+= Tema 3 - Tabelǎ de dispersie =
+
+Deadline: 15.12.2013
+Responsabili: Cristina Coman, Tudor Scurtu
+Data publicarii: 30.11.2013
+Data ultimei modificari: -
+
+==Obiective==
+* Înţelegerea structurii de **tabel de dispersie asociativ** şi implementarea acesteia
+* Întrebuinţarea genericitǎţii pentru extinderea utilizabilitǎţii structurii implementate
+
+==Descrierea problemei==
+
+===Introducere===
+
+**Tabela de dispersie asociativǎ** este o structurǎ de date care asociazǎ **chei** cu **valori**. Aceasta permite cǎutarea eficientǎ a unei valori pe baza cheii corespunzǎtoare. De exemplu, putem avea drept tabelǎ de dispersie o agendǎ telefonicǎ din care sǎ obţinem numǎrul de telefon al unei persoane pe baza numelui sǎu.
+
+Principiul de bazǎ este urmǎtorul: în locul dispunerii într-o singurǎ listǎ liniarǎ a tuturor perechilor cheie-valoare (**entry**-uri) din tabelǎ, acestea sunt grupate în mai multe subliste (**bucket**-uri), pe baza unui anumit criteriu. Astfel, cǎutarea unei chei se va face **doar** în ''bucket''-ul corespunzǎtor, şi nu în toatǎ lista, fapt ce reduce timpul de cǎutare. Pentru stabilirea ''bucket''-ului în care va fi plasat un ''entry'', cheii îi este aplicatǎ o funcţie de dispersie (**hash function**) care întoarce un numǎr întreg, numit cod de dispersie (**hash code**). Pe baza acestuia se determinǎ ''bucket''-ul în care se va introduce intrarea. Iatǎ o tabelǎ de dispersie:
+
+{{.:teme:tabela_de_dispersie.png}}
+
+Sǎ luǎm exemplul **agendei telefonice**. Putem alege drept funcţie de dispersie ''h'' poziţia din alfabet a primei litere a numelui persoanei. De exemplu, ''h("Andrei") = 1'' (litera A ocupǎ poziţia 1 în alfabet). Avem astfel 26 de valori posibile ale funcţiei ''h'' şi introducem în tabelǎ 26 de ''bucket''-uri. Primul va reprezenta lista perechilor (''nume, numar_de_telefon'') pentru care numele încep cu litera A. Al doilea, cu litera B etc. Mai jos se aflǎ o reprezentare principialǎ a agendei. Desigur, în ultima coloanǎ se pot înlǎnţui mai multe intrǎri în acelaşi bucket.
+
+{{.:teme:agenda_telefonica.png}}
+
+Constatǎm cǎ **eficienţa** operaţiei de cǎutare depinde de alegerea **funcţiei de dispersie**. De exemplu, pentru o funcţie de dispersie **constantǎ**, ''h(key) = 1'', pentru orice cheie ''key'', obţinem o unicǎ listǎ înlǎnţuitǎ. În acest caz eficienţa este **cea mai slabǎ**. La polul opus, cu eficienţǎ maximǎ, s-ar afla o funcţie de dispersie **injectivǎ**, care genereazǎ un cod de dispersie **unic** pentru fiecare cheie, astfel cǎ fiecare bucket ar conţine o singurǎ intrare. În practicǎ, astfel de funcţii sunt foarte greu de gǎsit.
+
+===Scopul temei===
+Tema urmǎreşte implementarea unui **tabel de dispersie asociativ**, **generic**, ce va permite stocarea perechilor cheie-valoare, având orice tipuri.
+
+==Cerinţe==
+
+===Implementare(80p)===
+
+Clasa voastrǎ, ''MyHashMapImpl'', va implementa interfaţa ''MyHashMap<K, V>'' definitǎ de noi, conservând **genericitatea**:
+
+<code java>
+class MyHashMapImpl<K, V> implements MyHashMap<K, V>
+</code>
+
+Interfaţa ''MyHashMap'' conţine şi interfeţele interioare ''Entry<K, V>'' şi ''Bucket<K, V>'', pentru a reprezenta entitǎţile implicate. Va trebui sǎ implementaţi şi aceste interfeţe (puteţi folosi clase interne).
+
+În cadrul implementǎrii voastre va trebui sǎ aveţi acces la ''bucket''-urile tabelei direct prin intermediul unui indice. Folosiţi un **vector de bucket-uri** (''[]'' sau ''ArrayList'') şi nu o listǎ înlǎnţuitǎ (gen ''LinkedList''), pentru ca accesul la orice element sǎ se facǎ în **timp constant**. Ideal ar fi ca acest index sǎ fie tocmai **codul de dispersie**. Adesea însǎ, codul are un interval prea mare de valori pentru a putea reprezenta direct indicele într-un vector. Cum, în general, codul de dispersie are tipul ''int'', este puţin probabil sǎ definiţi un vector cu indici între -2 miliarde şi 2 miliarde. De obicei se defineşte un vector cu un numǎr **mai redus** de bucket-uri (ex.: 20) iar codul de dispersie este **translatat** în acest interval. O funcţie de translatare des întrebuinţatǎ în acest sens este ''modulo'': ''translate(hashCode) = |hashCode| % numBuckets''. Aceastǎ funcţie garanteazǎ obţinerea unui indice între ''0'' şi ''numBuckets - 1''. Am folosit valoarea absolută a lui ''hashCode'' deoarece poate fi şi negativ.
+
+Clasa ''Object'' pune la dispoziţie metoda ''hashCode'', care întoarce tocmai codul de dispersie (''int'') asociat unui obiect. Aceasta este echivalentǎ funcţiei de dispersie. Metoda este folositǎ de clasa ''HashMap'' din biblioteca Java. În mod implicit, la definirea unei noi clase ce moşteneşte ''Object'', ''hashCode'' întoarce **adresa de memorie** a obiectului. Acest lucru nu este de foarte mare ajutor. În general metoda trebuie **supradefinitǎ** pentru a întoarce un cod calculat (eficient) pe baza datelor interne ale obiectului.
+
+Majoritatea claselor din biblioteca Java (String, Integer etc.) supradefinesc deja metoda ''hashCode'', astfel cǎ vǎ puteţi baza pe ea. Veţi folosi şi voi aceastǎ metodǎ pentru a obţine **codul de dispersie** al unei chei din tabelǎ, dar îi veţi aplica **translatarea** din paragraful anterior pentru a obţine **indicele** în vectorul de bucket-uri. Procesul de determinare a ''bucket''-ului în care va ajunge o cheie se poate rezuma aşa:
+
+''key -> key.hashCode() -> translatare hashCode -> indice în vectorul de bucket-uri''
+
+Operaţiile de bazǎ ale tabelei, aşa cum rezultǎ şi din interfaţa ''MyHashMap'', vor fi ''get'', ''put'', ''remove'', ''size'', cu aceeaşi funcţionalitate ca cele din clasa ''HashMap'', definitǎ în biblioteca Java. În implementarea voastrǎ puteţi folosi liste, dar **nu** puteţi folosi nici o implementare de tabel de dispersie din bibliotecǎ.
+
+===Analiza(20p)===
+
+Definiţi clasa ''Student'', cu membrii ''nume'' (String) şi ''vârstǎ'' (int). Supradefiniţi metoda ''hashCode'' pentru a calcula codul de dispersie pe baza membrilor (''nume'' şi ''vârstǎ''). Va trebui, de asemenea, sǎ supradefiniţi şi metoda ''equals'' (definitǎ şi ea în Object). Amintim cǎ aceastǎ metodǎ întoarce ''true'' dacǎ obiectul pentru care se apeleazǎ este echivalent cu obiectul primit ca parametru. În cazul nostru echivalenţa înseamnǎ nume şi vârstǎ identice.
+
+**Atenţie!** Metoda ''equals'' trebuie sǎ primeascǎ **parametru** de tipul ''Object''! Acesta este modul în care este definitǎ în clasa ''Object''. Declarând-o cu un alt parametru (ex. ''Student''), **nu** o veţi supradefini, ci veţi crea altǎ funcţie. Pentru a vǎ asigura cǎ aţi supradefinit corect metoda, puteţi prefixa declaraţia cu adnotarea ''@Override'', obţinând antetul:
+
+<code java>
+@Override
+public boolean equals(Object o)
+</code>
+
+În acest fel, dacǎ metoda nu supradefineşte într-adevar o metodǎ dintr-o clasǎ pǎrinte, compilatorul va semnala eroare. Este o practica bunǎ sǎ folosiţi **întotdeauna** ''@Override'' când supradefiniţi.
+Un **algoritm** de calcul al **codului de dispersie** pentru un obiect, care îşi dovedeşte eficienţa în practicǎ, este:
+
+<code java>
+h = 17
+pentru fiecare variabila membru m:
+    h = 37 * h + m.hashCode()
+return h
+</code>
+
+Drept ''hashCode'' pentru o variabilǎ întreagǎ puteţi folosi valoarea însǎşi.
+
+Definiţi apoi clasa ''LazyStudent'', care extinde ''Student'', şi supradefiniţi metoda ''hashCode()'' astfel încât sǎ întoarcǎ o valoare **constantǎ**.
+
+Generaţi un numǎr mare de instanţe ''Student'' (>1000) (cu membrii generaţi aleator) şi introduceţi-le într-o listǎ. Parcurgeţi lista şi introduceţi studenţii într-un ''MyHashMap<Student, Integer>'', unde valorile sunt note. Faceţi un numǎr mare de accesǎri aleatoare ale tabelei create (''get''), folosind drept chei instanţele ''Student'' create mai devreme. Reţineţi valorile ''System.currentTimeMillis()'' înainte şi dupǎ secvenţa de apeluri ''get'' şi scǎdeţi-le pentru a obţine **durata** în milisecunde a secvenţei.
+
+Repetaţi experimentul, folosind de data aceasta instanţe ''LazyStudent'' şi un ''MyHashMap<LazyStudent, Integer>''.
+
+Ce observaţi? (rǎspundeţi în ''README'').
+
+==Precizǎri generale==
+* **nu** este permisǎ modificarea interfeţei ''MyHashMap''
+* clasa ce implementeazǎ **tabela de dispersie** se va numi ''MyHashMapImpl''. Acest lucru este necesar pentru rularea **testelor**
+* clasa va oferi **constructorul** ''MyHashMapImpl(int numBuckets)'' prin care se va seta la crearea obiectului numǎrul de ''bucket''-uri din tabelǎ
+* **translatarea** codului de dispersie a unei chei în indicele de ''bucket'' se va face în **interiorul** tabelei, nu în implementǎri de ''hashCode()'', pentru ca acest indice depinde de tabela particularǎ pe care o folosim, nefiind intrinsec obiectului
+* clasa ce va conţine metoda ''main'' (pentru cerinţa 2) se va numi ''MainClass''
+
+===Corectare===
+
+Tema se va corecta folosind platforma vmchecker. Daca platforma de testare nu acorda niciun punct solutiei, atunci acesta va fi punctajul final al implementarii temei.
+
+<note important>**Toate solutiile vor fi verificate folosind o unealta de detectare a plagiatului. In cazul detectarii unui astfel de caz, atat plagiatorul cat si autorul original vor primi punctaj 0 pe tema si nu li se va permite intrarea in examen!**</note>
+
+===Punctaj===
+
+60p - acordate de vmchecker pentru execuţia cu succes a suitei de teste
+20p - acordate de asistent pentru analiza performanţei
+10p - acordate de asistent pe baza calitǎţii implementarii şi a respectǎrii principiilor POO
+10p - acordate de asistent pe baza lizibilitǎţii codului, a calitǎţii comentariilor și javadoc-ului şi a fisierului Readme
+
+==Resurse==
+
+{{.:tema3:schelet_tema3.zip|Schelet & Checker Tema 3}}\\
+
+<html><a class="media mediafile mf_pdf" href="/poo/arhiva/teme/2013/tema3?do=export_pdf">PDF enunț temă</a></html>

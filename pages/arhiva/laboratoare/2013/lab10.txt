@@ -1,0 +1,296 @@
+= Visitor pattern =
+
+* Responsabil: [[adriana.draghici@cs.pub.ro|Adriana Drăghici]]
+* Data publicării: 08.12.2013
+* Data ultimei modificări: 08.12.2013
+
+== Obiective == 
+
+Scopul acestui laborator este prezentarea design pattern-ului Visitor și familiarizarea cu situațiile în care acesta este util de aplicat.
+
+== Design Patterns == 
+
+Design pattern-urile reprezintă soluții generale și reutilizabile ale unei probleme comune în design-ul software. Un design pattern nu este un design în forma finală, ceea ce înseamnă ca nu poate fi transformat direct în cod. Acesta este o descriere a soluției sau un template ce poate fi aplicat pentru rezolvarea problemei. In general pattern-urile orientate obiect arată relațiile și interacțiunile dintre clase sau obiecte, fără a specifica însă forma finală a claselor sau obiectelor implicate.
+
+Design Pattern-urile fac parte din domeniul modulelor și interconexiunilor. La un nivel mai înalt se găsesc pattern-urile arhitecturale (//Architectural Patterns)// ce descriu structura întregului sistem. 
+
+Se consideră că exista aproximativ 2000 de design patterns [2], iar principalul mod de a le clasifica este următorul:
+ * **"Gang of Four" patterns**
+ * Concurrency patterns
+ * Architectural patterns  - descriere la un nivel mai inalt decat design patterns, stabilesc nivele și componente ale sistemelor/aplicațiilor, interactțiuni între acestea. Sunt de obicei implementat în frameworks (e.g. Java Spring).
+
+O carte de referință pentru design patterns este "Design Patterns: Elements of Reusable Object-Oriented Software" [1], denumită și "Gang of Four". Aceasta definește 23 de design patterns, foarte cunoscute și utilizate în prezent. Aplicațiile pot încorpora mai multe pattern-uri pentru a reprezenta legături dintre diverse componente (clase, module).
+În afară de GoF, și alți autori au adus în discuție pattern-uri orientate în special pentru aplicațiile enterprise și cele distribuite.
+
+Pattern-urile GoF sunt clasificate după următoarele tipuri:
+* **Creational Patterns** - mecanisme de creare a obiectelor
+   * Singleton, Factory etc
+* **Structural Patterns** - definesc relații între entități
+   * Decorator, Adapter, Facade, Composite, Proxy etc.
+* **Behavioural Patterns** - definesc comunicarea între entități
+   * Visitor, Observer, Command, Mediator, Strategy etc.
+
+<note important>
+Design pattern-urile nu trebuie privite ca niște rețete care pot fi aplicate direct pentru a rezolva o problemă din design-ul aplicației, pentru că de multe ori pot complica inutil arhitectura. Trebuie întâi înțeles dacă este cazul să fie aplicat un anumit pattern, si de-abia apoi adaptat pentru situația respectivă. Este foarte probabil chiar să folosiți un pattern (sau o abordare foarte similară acestuia) fără să vă dați seama sau să îl numiți explicit. Ce e important de reținut după studierea acestor pattern-uri este un mod de a aborda o problemă de design.
+</note>
+
+== Visitor ==
+
+Design pattern-ul //Visitor// oferă o modalitate de a //separa un algoritm de structură pe care acesta operează//. Avantajul constă în faptul că putem adauga noi posibilităţi de prelucrare a structurii, fără să o modificăm. Extrapolând, folosind //Visitor//, putem adăuga noi funcţii care realizează prelucrări asupra unei familii de clase, fără a modifica efectiv structura claselor. 
+
+Acest pattern este comportamental (//behavioral//) pentru că definește modalități de comunicare între obiecte. 
+
+//Cum recunoaștem o situație în care Visitor e aplicabil?//
+* Mai multe obiecte și operații pentru acestea
+* Schimbarea/adaugarea operațiilor fără a modifica clasele
+* Elemente heterogene - tipuri diferite de obiecte pe care se vor aplica operațiile
+
+Decizia de utilizare a pattern-ului Visitor este în strânsă legătură cu __stabilitatea ierarhiilor de clase prelucrate__: dacă noi clase copil sunt adăugate rar, atunci se poate aplica acest pattern (într-o manieră eficientă), altfel nu este indicat.
+
+== Structură == 
+
+<imgcaption image1|Componente pattern Visitor >{{ .:lab10:visitor.png?680 | }}</imgcaption>
+
+**Visitor** - o interfață pentru operația aplicată 
+**Visitable** - o interfață pentru obiecte pe care pot aplicate operațiile (în diagramă este numită ''Element'')
+   * metoda ''accept'' e independentă de tipul concret al Visitor-ului
+   * în ''accept'' se folosește obiectul de tip Visitor 
+Pentru fiecare algoritm/operație ce trebuie aplicată, se implementează clase de tip Visitor. În fiecare obiect de tip Visitor trebuie să implementăm metode care aplică operația pentru fiecare tip de element vizitabil.
+
+<note tip>În <imgref image2> este reprezentat **flow-ul aplicării acestui pattern**:
+  -  Clientul este cel care folosește o colecție de obiecte de unul sau mai multe tipuri, și dorește să aplice pe acestea diferite operații (în exercițiile din laborator clientul este practic programul vostru de test - main-ul). Clientul folosește obiecte //Visitor// create pentru fiecare operație necesară.
+  - Clientul parcurge colecția și în loc să aplice direct pe fiecare obiect operația, îi oferă acestuia un obiect de tip Visitor. 
+  - Obiectul apelează metoda de "vizitare" oferită de //Visitor//. 
+  - Pe obiectul //Visitor// se apelează metoda //visit// corespunzătoare obiectului, iar în ea se efectuează operația. (!!! în Visitor folosim conceptul de //overloading// pentru fiecare metodă //visit//) 
+</note>
+
+<imgcaption image2|Interacțiunile dintre componentele pattern-ului Visitor>{{ .:lab10:visitor-flow.png |}}</imgcaption>
+
+<note important>
+
+**Visitor și structurile de date**
+
+Aparent, folosirea lui //accept// este artificială. De ce nu declanşăm vizitarea unui obiect, apelând **direct** //v.visit(e)// atunci când dorim vizitarea unui obiect oarecare? Ce se intamplă însă, când dorim să vizităm o structură complexă de obiecte? (listă, arbore, graf etc):
+  * declanşarea vizitării se va face printr-un apel ''accept'' pe un prim obiect (e.g. rădacina arborelui)
+  * elementul curent este vizitat, prin apelul ''v.visit(this)''
+  * pe lângă vizitarea elementului curent, este necesar sa declanşăm vizitarea //tuturor elementelor accesibile din elementul curent// (e.g. nodurile-copil din arbore etc). Realizăm acest lucru apelând ''accept'' pe //fiecare// dintre aceste elemente. Acest comportament depinde de logica structurii.
+
+**Traversarea structurii** poate fi realizată in 3 moduri:
+  * de către **structură**
+  * în cadrul **vizitatorului**, în cazul unor parcurgeri cu o logică mai complexă
+  * **în conjuncţie cu un iterator**, care dictează //ordinea de vizitare//
+</note>
+
+== Scenariu Visitor ==
+
+Pentru a înţelege mai bine motivaţia din spatele design-pattern-ului //Visitor//, să considerăm următorul exemplu.
+
+=== Before ===
+
+Fie ierarhia de mai jos, ce defineşte un angajat (//Employee//) şi un şef (//Boss//), văzut, de asemenea, ca un angajat:
+
+<code java Test.java>
+class Employee {
+        String  name;
+        float   salary;        
+        public Employee(String name, float salary) {
+                this.name       = name;
+                this.salary     = salary;
+        }
+        public String getName() {
+                return name;
+        }
+        public float getSalary() {
+                return salary;
+        }
+}
+class Boss extends Employee {        
+        float bonus;
+        public Boss(String name, float salary) {
+                super(name, salary);
+                bonus = 0;
+        }        
+        public float getBonus() {
+                return bonus;
+        }
+        public void setBonus(float bonus) {
+                this.bonus = bonus;
+        }
+}
+public class Test {
+        public static void main(String[] args) {
+                Boss boss;
+                List<Employee> employees = new LinkedList<Employee>();                
+                employees.add(new Employee("Alice", 20));
+                employees.add(boss = new Boss("Bob", 1000));
+                boss.setBonus(100);
+        }
+}
+</code>
+
+Ne interesează să interogăm toţi angajaţii noştri asupra //venitului lor total//. Observăm că:
+  * anagajaţii obişnuiţi au salariul ca unic venit
+  * şefii posedă, pe lângă salariu, un posibil bonus
+
+Varianta la indemână ar fi să definim, în fiecare din cele doua clase, câte o metodă, //getTotalRevenue()//, care întoarce salariul pentru angajaţi, respectiv suma dintre salariu şi bonus pentru şefi:
+
+<code java>
+class Employee {
+        ...
+        public float getTotalRevenue() {
+                return salary;
+        }
+}
+class Boss extends Employee {
+        ...       
+        public float getTotalRevenue() {
+                return salary + bonus;
+        }
+}
+</code>
+
+Acum ne interesează să calulăm //procentul mediu// pe care îl reprezintă bonusul din venitul şefilor, luându-se în considerare doar bonusurile pozitive. Avem două posibilităţi:
+  * Definim câte o metodă, //getBonusPercentage()//, care în //Employee// întoarce mereu 0, iar în //Boss// raportul real. **Dezavantajul** constă în sporirea interfeţelor claselor cu funcţii prea specializate, de detaliu.
+  * Parcurgem lista de angajaţi, //testăm//, la fiecare pas, tipul angajatului, folosind ''instanceof'', şi calculăm, doar pentru şefi, raportul solicitat. **Dezavantajul** este tratarea într-o manieră //neuniformă// a structurii noastre, cu evidenţierea particularităţilor fiecărei clase.
+
+Datorită acestor particularităţi (în cazul nostru, modalităţile de calcul al venitului, respectiv procentului mediu), constatăm că ar fi foarte utilă **izolarea implementărilor specifice** ale algoritmului (în cazul nostru, scrierea unei funcţii în fiecare clasă). Acest lucru conduce, însă, la introducerea unei metode noi în //fiecare// din clasele antrenate in prelucrări, de fiecare dată cand vrem să punem la dispoziţie o nouă operaţie. Obţinem următoarele dezavantaje:
+  * în cazul unui număr mare de operaţii, **interfeţele claselor se aglomerează excesiv** şi se ascunde funcţionalitatea //de bază// a acestora
+  * codul din interiorul clasei (care servea functionalităţii primare a acesteia) va fi amestecat cu cel necesar algoritmilor de prelucrare, devenind mai greu de parcurs şi întreţinut
+  * în cazul în care nu avem acces la codul claselor, singura modalitate de adăugare de funcţionalitate este extinderea
+
+În final, tragem concluzia că este de dorit să **izolăm algoritmii de clasele pe care le prelucrează**. O primă idee se referă la utilizarea //metodelor statice//. Dezavantajul acestora este că nu pot reţine, într-un mod elegant, informaţie de stare din timpul prelucrării. De exemplu, dacă structura noastră ar fi arborescentă (recursivă), în sensul că o instanţă //Boss// ar putea ţine referinţe la alte instanţe //Boss//, ce reprezintă şefii ierarhic inferiori, o funcţie de prelucrare ar trebui să menţină o informaţie parţială de stare (precum suma procentelor calculate până într-un anumit moment) sub forma unor parametri furnizaţi apelului recursiv:
+<code java>
+class Boss extends Employee {
+        ...
+        public float getPercentage(float sum, int n) {
+                float f = bonus / getTotalRevenue();
+                if (f > 0)
+                        return inferiorBoss.getPercentage(sum + f, n + 1); // trimite mai departe cererea catre nivelul inferior                
+                return inferiorBoss.getPercentage(sum, n);
+        }        
+}
+</code>
+
+O abordare mai bună ar fi:
+  * conceperea claselor cu **posibilitatea de primire/ataşare a unor obiecte-algoritm**, care definesc operaţiile dorite
+  * definirea unor **clase algoritm** care vor __//**vizita**//__ structura noastră de date, vor //efectua// prelucrările specifice fiecărei clase, având, totodată, //posibilitatea de încapsulare a unor informaţii de stare// (cum sunt suma şi numărul din exemplul anterior)
+
+=== After ===
+Conform obsrevațiilor precedente, structura programului Employee-Boss devine:
+
+<code java>
+interface Visitor {
+        public void visit(Employee e);
+        public void visit(Boss b);
+}
+interface Visitable {
+        public void accept(Visitor v);
+}
+class Employee implements Visitable {
+        ...      
+        public void accept(Visitor v) {
+                v.visit(this);          
+        }
+}
+class Boss extends Employee {
+        ...        
+        public void accept(Visitor v) {
+                v.visit(this);          
+        }
+}
+public class Test {
+        public static void main(String[] args) {
+                ...
+                Visitor v = new SomeVisitor();        // creeaza un obiect-vizitator concret
+                for (Employee e : employees)
+                        e.accept(v);                
+        }
+}
+</code>
+
+Iată cum poate arăta un vizitator ce determină venitul total al fiecărui angajat şi îl afişează:
+<code java RevenueVisitor.java>
+public class RevenueVisitor implements Visitor {        
+        public void visit(Employee e) {
+                System.out.println(e.getName() + " " + e.getSalary());                
+        }        
+        public void visit(Boss b) {
+                System.out.println(b.getName() + " " + (b.getSalary() + b.getBonus()));                
+        }       
+}
+</code>
+
+Secvenţele de cod de mai sus definesc:
+  * o interfaţă, **Visitor**, ce reprezintă un //algoritm// oarecare, ce va putea vizita orice clasă. Observaţi definirea câte //unei metode visit(...)// pentru //fiecare clasă ce va putea fi vizitată//
+  * o interfaţă, **Visitable**, a carei metodă ''accept(Visitor)'' permite rularea unui algoritm pe structura curentă. 
+  * implementări ale metodei ''accept(Visitor)'', în cele două clase, care, pur şi simplu, solicită vizitarea instanţei curente de către vizitator. 
+  * o implementare a unei operații aplicabilă pe obiectele de tip Visitable
+
+În exemplul de mai sus, putem identifica :
+  * Element - Visitable
+  * ConcreteElement - Employee, Boss
+
+== Double-dispatch ==
+
+Mecanismul din spatele pattern-ului Visitor poartă numele de **double-dispatch**. Acesta este un concept raspândit, şi se referă la faptul că metoda apelată este determinată la //runtime// de doi factori. În exemplul Employee-Boss, efectul vizitarii, solicitate prin apelul ''e.accept(v)'', depinde de:
+  * tipul elementului vizitat, ''e'' (//Employee// sau //Boss//), pe care se invocă metoda
+  * tipul vizitatorului,'' v'' (//RevenueVisitor//), care conţine implementările metodelor //visit//
+
+Acest lucru contrastează cu un simplu apel //e.getTotalRevenue()//, pentru care efectul este hotărât doar de tipul anagajatului. Acesta este un exemplu de **single-dispatch**. 
+
+== Aplicabilitate ==
+
+Pattern-ul **Visitor** este util când:
+  * se doreşte prelucrarea unei //structuri complexe//, ce cuprinde mai multe obiecte de //tipuri diferite//
+  * se doreşte definirea de //operaţii distincte pe aceeaşi structură//, pentru a preveni poluarea interfeţelor claselor implicate, cu multe detalii aparţinând unor algoritmi diferiţi. În acest fel, se centralizează aspectele legate de acelaşi algoritm //într-un singur loc//, dar, în acelaşi timp, //se separă detaliile ce ţin de algoritmi diferiţi//. Acest lucru conduce la simplificarea atât a claselor prelucrate, cât şi a vizitatorilor. Orice date specifice algoritmului rezidă în vizitator.
+  * ** clasele ce se doresc prelucrate se schimbă rar, în timp ce operaţiile de prelucrare se definesc des**. Dacă apar des clase prelucrate, atunci este necesară modificarea vizitatorilor existenţi, pentru adăugarea unei metode //visit// special pentru clasa respectivă.
+
+<note important> 
+**Avantaje:**
+*  Decuplarea datelor de operațiile aplicate pe acestea
+*  Ușurează adăugarea unor noi operații/algortimi. Se creează o implementare a unui obiect de tip Visitor și nu se schimbă nimic în obiecte vizitate.
+*  Spre deosebire de Iterator poate gestiona elemente de tipuri diferite
+*  Poate menține informații de stare pe măsură ce vizitează obiectele
+
+**Dezavantaje:**
+* Depinde de stabilitatea ierarhiei de obiecte vizitate. Adăugarea de obiecte vizitabile rezultă în schimbarea implementării obiectelor Visitor. 
+     *:!: obiecte de noi tipuri adăugate des + multe operații aplicabile = NU folosiți Visitor
+* Expune metode publice care folosesc informații de stare ale obiectelor. Nu se pot accesa membrii privați ai claselor, necesitatea expunerii acestor informaţii (in forma publică) ar putea conduce la //ruperea încapsulării//
+</note>
+
+=== Exemple din API-uri ===
+
+Visitor este de obicei utilizat pentru structuri arborescente de obiecte:
+ * Parcurgerea arborilor de parsare
+     * [[http://www.eclipse.org/articles/article.php?file=Article-JavaCodeManipulation_AST/index.html | ASTVisitor]] din Eclipse JDT. Folosind //ASTParser// se creeaza arborele de parsare al codului dat ca intrare, iar //ASTVisitor// parcurge arborele, oferind metode (preVisit, postVisit, visit) pentru multe tipuri de noduri (MethodDeclaration, Assignment, IfStatement etc.)
+ * Parcurgerea și vizitarea ierarhiei de directoare și fișiere
+     * Java Nio - [[http://docs.oracle.com/javase/7/docs/api/index.html?java/nio/file/FileVisitor.html | FileVisitor]]
+        * //FileVisitor// - interfața cu metode de vizitare
+        * trebuie apelat [[http://docs.oracle.com/javase/7/docs/api/java/nio/file/Files.html#walkFileTree(java.nio.file.Path,%20java.nio.file.FileVisitor) | Files.walkFileTree]] transmițându-i ca parametru un obiect care implementează //FileVisitor//
+        * [[http://docs.oracle.com/javase/tutorial/essential/io/walk.html | un tutorial]] 
+
+
+== Exerciţii ==
+
+  - **(1p)** Scheletul de laborator conține implementarea folosind Visitor a scenariului Employee-Boss descris [[.:visitor#scenariu-visitor| mai sus]]. Rulați codul și observați comportamentul și interacțiunea dintre obiectele vizitate și obiectul de tip Visitor.
+  - **(6p)** Obiectele Employee-Boss pot fi reprezentate printr-o structură arborescentă, ce are ca rădăcină un Boss (ceo-ul). Creați un Visitor care să permită parcurgerea ierarhiei și efectuarea unei acțiuni pe fiecare nod. Acea acțiune este practic o operație, implementată într-o altă clasă de tip Visitor, deci TreeVisitor-ul va primi un obiect de tip Visitor pe care să îl aplice pe nodurile parcurse.
+       * fiecare //Boss// va ţine referinţe către angajaţii aflaţi sub răspunderea lui directă (ce pot fi alţi sefi la rândul lor, sau salariaţi obişnuiţi)
+       * implementați un //TreeVisitor// care pentru:
+             * //Employee// - aplică operația primită 
+             * //Boss// - parcurge subordonații și apoi aplică operația primită pe Boss
+       * implementați un //AverageIncomeVisitor// care calculează venitul mediu pe toate compania (sum_salary/num_employees)
+   - **(3p)** Adăugați încă un tip de obiect vizitabil - //Intern//. Acesta nu are salariu, doar nume și durata (în luni) a internship-ului. 
+       * modificați clasele existente deja, pentru a lua în considerare și obiectele Intern
+       * testați operațiile de la exercițiile anterioare pe o colecție care conține și obiecte Intern 
+       * :!: Observați modificările pe care le-ați efectuat pentru a adăuga o nouă operație (ex. 2) și pe cele pentru a adăuga un nou tip de obiect în colecție. Ca să merite să aplicăm pattern-ul Visitor, ce situație ar trebui să fie evitată?
+   - **(bonus - 2p)** Calculați recursiv dimensiunea în bytes a unui director folosind java.nio. 
+       * implementați un [[http://docs.oracle.com/javase/7/docs/api/index.html?java/nio/file/FileVisitor.html | FileVisitor]], extinzând [[http://docs.oracle.com/javase/7/docs/api/java/nio/file/SimpleFileVisitor.html | SimpleFileVisitor]] în care suprascrieți metoda de vizitare a fișierelor 
+        * un exemplu similar găsiți în [[http://docs.oracle.com/javase/tutorial/essential/io/walk.html | acest tutorial]]
+        * Clasele din API-ul //nio//  folosite pentru acest exercițiu sunt disponibile din [[http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html | jdk 7]].
+== Resurse ==
+* {{.:lab10:visitor-ex.zip| Schelet cod}}
+* <html><a class="media mediafile mf_pdf" href="/poo/arhiva/laboratoare/2013/lab10?do=export_pdf">PDF laborator</a></html>
+== Referințe ==
+  - Vlissides, John, et al. //Design patterns: Elements of reusable object-oriented software//. Addison-Wesley (1995).
+  - Smith, Jason. //Elemental Design Patterns//. Addison-Wesley, 2012.
+  - [[http://en.wikipedia.org/wiki/Software_design_pattern | Clasificarea design pattern-urilor]]

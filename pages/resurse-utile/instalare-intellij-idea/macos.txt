@@ -1,0 +1,32 @@
+= Instalare IntelliJ Idea (macOS Sierra) =
+
+* Responsabil: Laurențiu Stamate
+* Data publicării: 29.10.2016
+* Data ultimei modificări: 11.11.2016
+
+1. Accesați [[http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html|site-ul oficial de descărcare]] Java SE Development Kit 8 (JDK).
+2. Citiți și acceptați acordul de licențiere și alegeți versiunea specifică sistemului vostru de operare.
+3. Deschideți programul descărcat.
+
+{{ :resurse-utile:instalare-jdk:macos:jdk_01.png?nolink |}}
+{{ :resurse-utile:instalare-jdk:macos:jdk_02.png?nolink |}}
+{{ :resurse-utile:instalare-jdk:macos:jdk_03.png?nolink |}}
+{{ :resurse-utile:instalare-jdk:macos:jdk_04.png?nolink |}}
+{{ :resurse-utile:instalare-jdk:macos:jdk_05.png?nolink |}}
+
+4. Accesați [[https://www.jetbrains.com/idea/download/|site-ul oficial de descărcare]] IntelliJ Idea by JetBrains.
+5. Descărcați versiunea pentru macOS.
+
+{{ :resurse-utile:instalare-intellij-idea:macos:intellij_01.png?nolink |}}
+{{ :resurse-utile:instalare-intellij-idea:macos:intellij_02.png?nolink |}}
+{{ :resurse-utile:instalare-intellij-idea:macos:intellij_03.png?nolink |}}
+
+6. Pentru activare, urmați [[ resurse-utile:activare-intellij-idea | instrucțiunile de activare]].
+
+{{ :resurse-utile:instalare-intellij-idea:macos:intellij_04.png?nolink |}}
+{{ :resurse-utile:instalare-intellij-idea:macos:intellij_05.png?nolink |}}
+{{ :resurse-utile:instalare-intellij-idea:macos:intellij_06.png?nolink |}}
+{{ :resurse-utile:instalare-intellij-idea:macos:intellij_07.png?nolink |}}
+{{ :resurse-utile:instalare-intellij-idea:macos:intellij_08.png?nolink |}}
+{{ :resurse-utile:instalare-intellij-idea:macos:intellij_09.png?nolink |}}
+{{ :resurse-utile:instalare-intellij-idea:macos:intellij_10.png?nolink |}}

@@ -1,0 +1,51 @@
+== Punctaj == 
+
+    * Parcurs
+        * 4p: temele de casă (4 x 1p)
+        * 1p + 1p bonus: laborator + teste săptămânale
+        * 1p: test grilă, în ultima săptămâna 
+    * Examen final (4p) 
+  
+    * Pentru **susținerea** examenului este necesară obținerea a minimum 3p (din 6p) pe parcurs. 
+    * Pentru **promovare** este necesară obținerea a minimum 2p (din 4p) la examen. Aceleași condiții sunt valabile și în cazul examenului de **restanță**.
+    * În cazul nepromovării examenului de restanță, se poate păstra punctajul complet din anii precedenți (dacă respectă condiția de intrare în examen). Dacă nu a fost respctată condiția de intrare în examen trebuie refacută activitatea de pe parcurs (laboratoare, teme, test), nu se pastrează punctaje parțiale din anul precedent. 
+
+
+== Laborator ==  
+    * Este recomandată parcurgerea textului laboratorului înainte de venirea la oră.
+    * În primele 10 minute de la fiecare laborator (cu excepția primului) se va da un test constand dintr-o întrebare (maxim 2, in functie de dificultate) din __laboratorul precedent__. Testele acestea valorează în total un 1 punct.
+    * Numărul maxim de studenţi într-un laborator este de 14; cei care au intervalul respectiv în orar vor avea prioritate.
+    * Mutarea într-un alt interval orar se poate face până în săptămâna a 3-a, în limita locurilor disponibile sau prin schimb cu un alt student şi numai cu acordul asistenților.
+    * Recuperarea unui laborator se poate face doar în aceeași săptămână, la orice grupă indiferent de serie și în limita locurilor disponibile. Trebuie obţinut, cu cel puţin o zi înainte, acordul asistentului la care se va face recuperarea. Pe parcursul semestrului puteti recupera de maxim 3 ori. Pentru situații speciale discutați cu titularul de curs și asistentul de la laborator.
+    * Laboratorul de recapitulare nu se punctează.
+  
+== Teme de casă ==
+  * Soluțiile temelor se vor încărca pe [[https://vmchecker.cs.pub.ro/ui/|vmchecker]].
+  * Structura arhivei va fi precizată în enunțul temei. În rădăcina acesteia trebuie să existe un fișier **README**, care va conține o descriere a soluției voastre (text tehnic, nu proză).    
+  * Pentru fiecare zi de întârziere față de deadline-ul temei se aplică o **penalizare de 5%** din punctajul acesteia.
+  
+<note warning>**ATENȚIE!**  
+ Teme vor fi verificate cu o aplicație antiplagiat. Temele detectate ca fiind copiate vor conduce la **ANULAREA CELOR 6p DIN TIMPUL SEMESTRULUI**, fiind necesară refacerea materiei în anul universitar următor! You shall indeed not pass!
+</note> 
+
+<note warning>
+Atenție la ce lăsați pe calculatoarele pe care lucrați - calculatoare deschise, Drive, Dropbox, mail-uri, stick-uri etc. Este grija voastră!
+
+În cazul detectării plagiatului, argumentele de tipul "mi-am lăsat calculatorul logat pe Drive" vor avea aceeași valoare cu "mi-a mâncat câinele codul Java". **You have been warned.**
+</note>
+
+== Test ==
+
+Testul verfică noțiunile prezentate în laboratoare și se dă cu toate grupele simultan, în săptămâna 14, la o oră și dată ce va fi anunțată pe forum.
+
+* Testul este grilă și conține 20 de întrebări 
+* Fiecare întrebare are 4 variante și răspuns unic
+    * fiecare răspuns corect are 1 punct
+    * pentru fiecare răspuns greșit se scade 0.25
+* Durata testului este de 40 minute
+
+
+== Examen == 
+
+Examenul verifică noțiunile prezentate la curs și constă dintr-o parte de teorie (5 întrebări) și o problemă. Fiecare parte durează 30 minute. Examenul nu este open book.
+

@@ -1,0 +1,30 @@
+= Proiect IntelliJ Idea =
+
+* Responsabil: Laurențiu Stamate
+* Data publicării: 09.10.2016
+* Data ultimei modificări: 11.11.2016
+
+<note important>Înainte de parcurgerea acestei resurse, asigurați-vă că ați parcurs [[resurse-utile:instalare-intellij-idea]] și [[resurse-utile:activare-intellij-idea]]</note>
+
+{{ :resurse-utile:proiect-intellij-idea:intellij_01.png?nolink |}}
+
+<note tip>La prima rulare a programului, va trebui să setăm locația JDK-ului.</note>
+
+{{ :resurse-utile:proiect-intellij-idea:intellij_02.png?nolink |}}
+{{ :resurse-utile:proiect-intellij-idea:intellij_03.png?nolink |}}
+{{ :resurse-utile:proiect-intellij-idea:intellij_04.png?nolink |}}
+
+<note tip>Selectăm **Create project from template** și selectați **Command Line App**.</note>
+
+{{ :resurse-utile:proiect-intellij-idea:intellij_05.png?nolink |}}
+{{ :resurse-utile:proiect-intellij-idea:intellij_06.png?nolink |}}
+
+<note tip>Folosind template-ul, clasa **Main** și metoda **main** au fost create automat.</note>
+
+{{ :resurse-utile:proiect-intellij-idea:intellij_07.png?nolink |}}
+
+<note tip>Vom vedea mai jos cum putem crea alte clase pentru a ne putea extinde funcționalitatea aplicațiilor.</note>
+
+{{ :resurse-utile:proiect-intellij-idea:intellij_08.png?nolink |}}
+{{ :resurse-utile:proiect-intellij-idea:intellij_09.png?nolink |}}
+{{ :resurse-utile:proiect-intellij-idea:intellij_10.png?nolink |}}

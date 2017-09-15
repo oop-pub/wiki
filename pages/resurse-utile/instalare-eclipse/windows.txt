@@ -1,0 +1,27 @@
+= Instalare Eclipse (Windows 10) =
+
+* Responsabil: Laurențiu Stamate
+* Data publicării: 11.11.2016
+* Data ultimei modificări: 11.11.2016
+
+1. Accesați [[http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html|site-ul oficial de descărcare]] Java SE Development Kit 8 (JDK).
+2. Citiți și acceptați acordul de licențiere și alegeți versiunea specifică sistemului vostru de operare.
+3. Deschideți programul descărcat.
+
+{{ :resurse-utile:instalare-jdk:windows:jdk_01.png?nolink |}}
+{{ :resurse-utile:instalare-jdk:windows:jdk_02.png?nolink |}}
+{{ :resurse-utile:instalare-jdk:windows:jdk_03.png?nolink |}}
+{{ :resurse-utile:instalare-jdk:windows:jdk_04.png?nolink |}}
+{{ :resurse-utile:instalare-jdk:windows:jdk_05.png?nolink |}}
+{{ :resurse-utile:instalare-jdk:windows:jdk_06.png?nolink |}}
+
+4. Accesați [[https://www.eclipse.org/downloads/|site-ul oficial de descărcare]] Eclipse Neon.
+5. Descărcați versiunea pentru Windows.
+
+{{ :resurse-utile:instalare-eclipse:windows:eclipse_01.png?nolink |}}
+{{ :resurse-utile:instalare-eclipse:windows:eclipse_02.png?nolink |}}
+{{ :resurse-utile:instalare-eclipse:windows:eclipse_03.png?nolink |}}
+{{ :resurse-utile:instalare-eclipse:windows:eclipse_04.png?nolink |}}
+{{ :resurse-utile:instalare-eclipse:windows:eclipse_05.png?nolink |}}
+{{ :resurse-utile:instalare-eclipse:windows:eclipse_06.png?nolink |}}
+

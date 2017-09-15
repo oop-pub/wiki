@@ -1,0 +1,12 @@
+= Instalare Eclipse =
+
+* Responsabil: Laurențiu Stamate
+* Data publicării: 09.10.2016
+* Data ultimei modificări: 11.11.2016
+
+
+- [[resurse-utile:instalare-eclipse:windows]]
+
+- [[resurse-utile:instalare-eclipse:ubuntu]]
+
+- [[resurse-utile:instalare-eclipse:macos]]

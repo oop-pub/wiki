@@ -1,0 +1,170 @@
+= JUnit =
+
+* Responsabil: Cristina Coman
+* Data publicării: 3.11.2013
+* Data ultimei modificări: 4.11.2013
+
+==Obiective==
+Scopul acestui laborator este familiarizarea studenţilor cu noţiunea de **Unit Testing** şi folosirea unui framework **Junit** pentru realizarea testǎrii.
+    
+==Unit testing==
+
+Unit testing-ul s-a impus în ultima perioadă în dezvoltarea proiectelor scrise în limbajul Java şi nu numai, pe măsura apariţiei unor utilitare gratuite de testare a claselor, care au contribuit la creşterea vitezei de programare şi la micşorarea drastică a numărului de bug-uri.
+
+Printre avantajele folosirii framework-ului JUnit se numără:
+* îmbunătăţirea vitezei de scriere a codului, concomitent cu creşterea calităţii acestuia
+* clasele de test sunt uşor de scris şi modificat pe măsură ce codul sursă se măreşte, putând fi compilate împreună cu codul sursă al proiectului.
+* clasele de test JUnit pot fi rulate automat (în suită), rezultatele fiind vizibile imediat.
+* clasele de test măresc încrederea programatorului în codul sursă scris şi îi permit să urmărească mai uşor cerinţele de implementare ale proiectului
+* testele pot fi scrise înaintea implementǎrii, fapt ce garanteazǎ înţelegerea funcţionalitǎţii de cǎtre dezvoltator
+
+==JUnit==
+Reprezintǎ un framework de Unit Testing pentru Java. 
+
+
+=Exemplu=
+
+<code java Student.java>
+
+public class Student {
+	
+	private String name;
+	
+	private String age;
+
+	public Student(String name, String age) {
+		super();
+		this.name = name;
+		this.age = age;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getAge() {
+		return age;
+	}
+
+	public void setAge(String age) {
+		this.age = age;
+	}
+}
+
+</code>
+
+<code java Grupa.java>
+import java.util.ArrayList;
+import java.util.List;
+
+public class Grupa {
+
+	List<Student> students;
+	
+	Grupa () {
+		students = new ArrayList<Student>();
+	}
+	
+	public List<Student> getStudents() {
+		return students;
+	}
+	
+	public void setStudents(List<Student> students) {
+		this.students = students;
+	}
+	
+	public void addStudent(Student student) {
+		students.add(student);
+	}
+	
+	public Student getStudent(String name) {
+		for (Student st : students) {
+			if (null != st.getName() && st.getName().equals(name)) {
+				return st;
+			}
+		}
+		return null;
+	}
+	
+	public boolean areStudentsInGroup() {
+		if (students.size() == 0) {
+			return false;
+		}
+		return true;
+	}
+
+}
+</code>
+
+<code java Test.java>
+import org.junit.Assert;
+import org.junit.Before;
+
+public class Test {
+	private Grupa grupa;
+	
+	@Before
+	public void setup() {
+		grupa = new Grupa();
+	}
+	
+	@org.junit.Test
+	public void testNoStudentInGroup() {
+		Assert.assertEquals(false, grupa.areStudentsInGroup());
+	}
+	
+	@org.junit.Test
+	public void testAddStudent() {
+		Student st = new Student("Elena", "11");
+		grupa.addStudent(st);
+		
+		Assert.assertTrue(grupa.getStudent("Elena").equals(st));
+	}
+	
+}
+</code>
+
+Observaţii:
+* fiecare metodǎ de test are adnotarea: **''@Test''**
+* metodele ''setUp''(avand adnotarea: **''@Before''**) si ''tearDown''(**''@After''**) se apeleazǎ înainte, respectiv dupǎ fiecare test. Se întrebuinţeazǎ pentru iniţializarea/eliberarea resurselor ce constituie mediul de testare, evitându-se, totodatǎ, duplicarea codului, şi respectându-se principiul de independentǎ a testelor.
+* pentru compararea rezultatului aşteptat cu rezultatul curent se folosesc apeluri **''assert''**:
+    * ''assertTrue''
+    * ''assertFalse''
+    * ''assertEquals''
+    * ''assertNull''/''assertNotNull''
+* **Rulare teste**: Click dreapta clasǎ test -> //Run as// -> //Junit test//
+* **Rulare test**: Selectare test -> click dreapta ->  //Run as// -> //Junit test//
+
+
+<note tip>
+În cadrul laboratorului vom folosi framework-ul Junit adaugand fisierul  [[http://sourceforge.net/projects/junit/files/latest/download | jar]] cu acesta la proiectele create.
+
+Pentru a importa un //jar// într-un proiect din eclipse parcurgeţi urmǎtorii paşi: //click dreapta proiect// ->// Build path// -> //Configure build path// -> //Libraries// ->// Add jars (Add external jars)//</note>
+
+==Exerciţii==
+
+   - **(5p)** Creaţi clasa  ''Animal'' şi clasa ''Zoo''. Clasa ''Zoo'' conţine un vector de animale. Implementaţi metodele: ''addAnimal(Animal a)'', ''removeAnimal(Animal a)'', ''boolean areAnimals(), getAnimals()'', ''size()''. Creaţi o clasa ''Test'' unde veţi verifica diverse __scenarii__:
+      * (1p) La rularea fiecǎrei metode veti instanţia clasa ''Zoo''.
+      * (1p) Metoda ''testAddAnimal'' - adaugă un obiect ''Animal'' şi verificǎ daca adǎugarea a avut loc cu succes. Folosiţi: **''assertEquals''**
+      * (1p) Metoda ''testRemoveAnimal'' - folosiţi **''assertTrue''**
+      * (1p) Metoda ''testAreAnimalsInZoo'' - testul picǎ dacǎ metoda returneazǎ ''false''. //Hint//: **''Assert.fail()''** 
+      * (1p) Metoda ''testGetAnimals'' - adǎugaţi douǎ obiecte ''Animal''. Verificaţi ca adǎugarea a avut loc cu succes. Folosiţi **assertFalse**.
+   - **(5p)** Acest exerciţiu urmǎreşte identificarea unor cazuri de test, strict pe baza specificaţiei, în absenţa accesului la codul sursǎ şi a cunoaşterii modului intern de funcţionare a sistemului. Se considerǎ o clasa ''GeometricForms'' avand un constructor ce primeste un String ce poate fi unul din valorile enum-ului ''Forms''.
+       * Adǎugaţi în build path-ul proiectului clasele din scheletul de laborator.
+       * Metodele ''isTriangle'', ''isCircle'' si ''isRectangle'' au drept scop evaluarea stǎrii obiectului ''GeometricForms''.
+       * Creaţi un scenariu de testare pentru aceastǎ clasǎ, prin implementarea propriilor cazuri de testare, într-o clasǎ ''GeometricFormsTest''.
+       * Construiţi teste specializate, orientate pe o anumitǎ funcţionalitate. De exemplu, în cadrul unui test, verificaţi doar una din cele 3 metode.
+       * <code java>
+public enum Forms {
+   TRIANGLE, CIRCLE, RECTANGLE
+}
+</code>
+== Resurse ==
+
+* {{..:2013:lab_junit.zip|Schelet}}
+* {{..:2013:lab_junit_sol.zip|Soluții}}
+* [[https://github.com/junit-team/junit/wiki/Download-and-Install | Junit download]]
