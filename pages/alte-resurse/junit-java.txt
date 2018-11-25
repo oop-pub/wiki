@@ -1,0 +1,200 @@
+= JUnit =
+
+== Obiective ==
+
+  * familiarizarea cu noţiunea de **Unit Testing** şi folosirea framework-ului **JUnit** pentru realizarea testării
+
+== Unit testing ==
+
+Unit testing-ul s-a impus în ultima perioadă în dezvoltarea proiectelor scrise în limbajul Java şi nu numai, pe măsura apariţiei unor utilitare gratuite de testare a claselor, care au contribuit la creşterea vitezei de programare şi la micşorarea semnificativă a numărului de bug-uri.
+
+Printre avantajele folosirii framework-ului JUnit se numără:
+* îmbunătăţirea vitezei de scriere a codului şi creşterea calităţii acestuia
+* clasele de test sunt uşor de scris şi modificat pe măsură ce codul sursă se măreşte, putând fi compilate împreună cu codul sursă al proiectului
+* clasele de test JUnit pot fi rulate automat (în suită), rezultatele fiind vizibile imediat
+* clasele de test măresc încrederea programatorului în codul sursă scris şi îi permit să urmărească mai uşor cerinţele de implementare ale proiectului
+* testele pot fi scrise înaintea implementării, fapt ce garantează înţelegerea funcţionalităţii de către dezvoltator
+
+=== JUnit ===
+
+Reprezintă un framework de Unit Testing pentru Java. 
+
+
+**Exemplu:**
+
+<code java Student.java>
+
+public class Student {
+
+    private String name;
+    private String age;
+
+    public Student(String name, String age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getAge() {
+        return age;
+    }
+
+    public void setAge(String age) {
+        this.age = age;
+    }
+
+}
+
+</code>
+
+<code java Group.java>
+import java.util.ArrayList;
+import java.util.List;
+
+public class Group {
+
+    List<Student> students;
+
+    Group () {
+        students = new ArrayList<Student>();
+    }
+
+    public List<Student> getStudents() {
+        return students;
+    }
+
+    public void setStudents(List<Student> students) {
+        this.students = students;
+    }
+
+    public void addStudent(Student student) {
+        students.add(student);
+    }
+
+    public Student getStudent(String name) {
+        for (Student st : students) {
+            if (null != st.getName() && st.getName().equals(name)) {
+                return st;
+            }
+        }
+        return null;
+    }
+
+    public boolean areStudentsInGroup() {
+        if (0 == students.size()) {
+            return false;
+        }
+        return true;
+    }
+
+}
+</code>
+
+<code java Test.java>
+import org.junit.Assert;
+import org.junit.Before;
+
+public class Test {
+    private Group group;
+
+    @Before
+    public void setup() {
+        group = new Group();
+    }
+
+    @org.junit.Test
+    public void testNoStudentInGroup() {
+        Assert.assertEquals(false, group.areStudentsInGroup());
+    }
+
+    @org.junit.Test
+    public void testAddStudent() {
+        Student st = new Student("Elena", "11");
+        group.addStudent(st);
+
+        Assert.assertTrue(group.getStudent("Elena").equals(st));
+    }
+    @After void tearDown() {
+        group = null;
+    }
+
+}
+</code>
+
+**Observaţii:**
+* fiecare metodă de test are adnotarea: ''@Test''
+* metodele de **setUp** (având adnotarea: ''@Before'') şi **tearDown** (având adnotarea: ''@After'') se apelează înainte, respectiv după fiecare test. Se întrebuinţează pentru iniţializarea/eliberarea resurselor ce constituie mediul de testare, evitându-se totodată duplicarea codului şi respectându-se principiul de independenţă a testelor. Pentru exemplul dat ordinea este:
+    * ''@Before setUp''
+    * ''@Test testNoStudentInGroup''
+    * ''@After tearDown''
+    * ''@Before setUp''
+    * ''@Test testAddStudent''
+    * ''@After tearDown''
+* În contextul moștenirii dacă ChildTest extends ParentTest ordinea de execuţie este urmatoarea:
+    * ''**ParentTest** @Before setUp''
+    * ''ChildTest @Before setUpSub''
+    * ''ChildTest @Test testChild1''
+    * ''ChildTest @After tearDownSub''
+    * ''**ParentTest** @After tearDown''
+* Pentru compararea rezultatului aşteptat cu rezultatul curent se folosesc apeluri ''assert'':
+    * ''assertTrue''
+    * ''assertFalse''
+    * ''assertEquals''
+    * ''assertNull'' / ''assertNotNull''
+* **Rulare teste**: Click dreapta clasă test -> //Run as// -> //Junit test//
+* **Rulare test**: Selectare test -> click dreapta ->  //Run as// -> //Junit test//
+
+
+<note important>
+În cadrul laboratorului vom folosi framework-ul JUnit adăugând fişierele [[http://search.maven.org/remotecontent?filepath=junit/junit/4.12/junit-4.12.jar|junit.jar]] şi [[https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/hamcrest/hamcrest-all-1.3.jar|hamcrest-all-1.3.jar]] cu acesta la proiectele create.
+
+Pentru a importa un //jar// într-un proiect din ''Eclipse'' parcurgeţi următorii paşi: //click dreapta proiect// -> //Build path// -> //Configure build path// -> //Libraries// -> //Add jars (Add external jars)//.
+</note>
+
+Câteodată avem nevoie să testăm funcționalitatea unor clase ce folosesc metode din alte clase netestate sau care nu pot fi testate. De asemenea, există cazuri în care vrem sa testăm comportamentul clasei în situații extreme sau foarte greu de replicat (erori de disc, epuizarea spațiului pe disc, obținerea unei anumite valorii în cazul in care folosim generatoare random).
+
+Pentru a rezolva ușor aceste necesități putem folosi obiecte de tip **mock**. Aceste obiecte simulează comporatamentul clasei mock-uite și sunt controlate din interiorul unit testelor. Pentru mai multe detalii puteți consulta pagina [[http://en.wikipedia.org/wiki/Mock_object|Mock Object]].
+
+<note tip>
+În Java pentru a implementa mock-uri puteți folosi framework-ul **JMock**. Un scurt tutorial de instalare si folosire găsiți [[http://www.askeygeek.com/jmock-for-beginners/|aici]]. Pentru exemple mai detaliate puteţi consulta [[http://www.jmock.org/cookbook.html|cookbook-ul]] pus la dispozitie pe site-ul jmock.org.
+</note>
+
+== Exerciţii ==
+
+  - **(2p)** Creaţi clasa  ''Animal'' şi clasa ''Zoo''. Clasa ''Zoo'' conţine un vector de animale. Implementaţi metodele: ''addAnimal(Animal a)'', ''removeAnimal(Animal a)'', ''boolean areAnimals(), getAnimals()'', ''size()''. Creaţi o clasa ''Test'' unde veţi verifica diverse __scenarii__:
+    * La rularea fiecărei metode veti instanţia clasa ''Zoo''.
+    * Metoda ''testAddAnimal'' - adaugă un obiect ''Animal'' şi verifică daca adăugarea a avut loc cu succes. Folosiţi: **''assertEquals''**
+    * Metoda ''testRemoveAnimal'' - folosiţi **''assertTrue''**
+    * Metoda ''testAreAnimalsInZoo'' - testul pică dacă metoda returnează ''false''. //Hint//: **''Assert.fail()''** 
+    * Metoda ''testGetAnimals'' - adăugaţi două obiecte ''Animal''. Verificaţi ca adăugarea a avut loc cu succes. Folosiţi **assertFalse**.
+  - **(2p)** Acest exerciţiu urmăreşte identificarea unor cazuri de test, strict pe baza specificaţiei, în absenţa accesului la codul sursă şi a cunoaşterii modului intern de funcţionare a sistemului. Se consideră o clasa ''GeometricForms'' avand un constructor ce primeste un String ce poate fi unul din valorile enum-ului ''Forms''.
+    * Adăugaţi în build path-ul proiectului clasele din scheletul de laborator.
+    * Metodele ''isTriangle'', ''isCircle'' si ''isRectangle'' au drept scop evaluarea stării obiectului ''GeometricForms''.
+    * Creaţi un scenariu de testare pentru această clasă, prin implementarea propriilor cazuri de testare, într-o clasă ''GeometricFormsTest''.
+    * Construiţi teste specializate, orientate pe o anumită funcţionalitate. De exemplu, în cadrul unui test, verificaţi doar una din cele 3 metode.
+    * <code java>
+public enum Forms {
+   TRIANGLE, CIRCLE, RECTANGLE
+}
+</code>
+
+== Resurse ==
+
+* <html><a class="media mediafile mf_pdf" href="/poo/laboratoare/exceptii?do=export_pdf">PDF laborator</a></html>
+* [[http://search.maven.org/remotecontent?filepath=junit/junit/4.12/junit-4.12.jar|Junit Download]]
+* [[http://search.maven.org/remotecontent?filepath=org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar|Hamcrest Core]]
+* {{:alte-resurse:junit-java:skel.zip|Schelet}}
+* {{:alte-resurse:junit-java:sol.zip|Soluție}}
+
+== Referinţe ==
+
+* [[http://en.wikipedia.org/wiki/Mock_object|Mock Object]]
+* [[http://www.askeygeek.com/jmock-for-beginners/|JMock for beginners]]
+* [[http://www.jmock.org/cookbook.html|JMock Cookbook]]
